@@ -770,17 +770,17 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
             </div>
             {dmamaResult && (
               <div style={styles.resultCard}>
-                <h3 style={{ color: '#632569', marginTop: 0, fontSize: '17px' }}>Guía para tu proyecto DMAMA</h3>
-                <div style={{ lineHeight: '1.6', fontSize: '15px' }}>
+                <h3 style={{ color: '#632569', marginTop: 0, fontSize: '19px', fontWeight: 800 }}>Guía para tu proyecto DMAMA</h3>
+                <div style={{ lineHeight: '1.7', fontSize: '15.5px' }}>
                   {
                     (() => {
                       // Agrupa bloques por títulos (líneas que terminan en ":")
                       const lines = dmamaResult.split('\n');
                       let blocks = [];
-                      let currentBlock = { title: null, content: [], color: "#e0e7ff" };
-                      // Paleta de colores suave y ejecutiva
+                      let currentBlock = { title: null, content: [], color: "#f8f9fa" };
+                      // Paleta de colores ejecutiva y muy suave
                       const blockColors = [
-                        "#e0e7ff", "#ffe4e6", "#fef9c3", "#d1fae5", "#f3e8ff", "#f1f5f9"
+                        "#f8f9fa", "#f3f6fd", "#f7f5fa", "#f6f9f3", "#f9f6f3", "#f3f9f7"
                       ];
                       let colorIdx = 0;
 
@@ -814,19 +814,20 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
                           key={idx}
                           style={{
                             background: block.color,
-                            borderRadius: 12,
-                            padding: "16px 18px",
-                            marginBottom: 14,
-                            boxShadow: "none",
-                            border: "none"
+                            borderRadius: 14,
+                            padding: "22px 20px 18px 20px",
+                            marginBottom: 22,
+                            boxShadow: "0 2px 12px 0 rgba(99,37,105,0.07)",
+                            border: "1px solid #ececec"
                           }}
                         >
                           {block.title && (
                             <div style={{
                               color: "#632569",
-                              fontWeight: 800,
-                              fontSize: '16px',
-                              marginBottom: 6
+                              fontWeight: 900,
+                              fontSize: '18px',
+                              marginBottom: 10,
+                              letterSpacing: '0.2px'
                             }}>
                               {block.title.replace(/slide/gi, "Diapositiva")}
                             </div>
@@ -838,14 +839,14 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
                               // Viñetas
                               if (/^\s*[\-\*]\s+/.test(lineWithDiapositiva)) {
                                 return (
-                                  <ul key={i} style={{ paddingLeft: 18, margin: 0 }}>
-                                    <li style={{ marginBottom: 4 }}>{parseBold(lineWithDiapositiva.replace(/^\s*[\-\*]\s+/, ""))}</li>
+                                  <ul key={i} style={{ paddingLeft: 22, margin: "0 0 6px 0", listStyle: "disc" }}>
+                                    <li style={{ marginBottom: 6, fontSize: "15.5px" }}>{parseBold(lineWithDiapositiva.replace(/^\s*[\-\*]\s+/, ""))}</li>
                                   </ul>
                                 );
                               }
                               // Texto normal
                               return (
-                                <div key={i} style={{ marginBottom: 4 }}>
+                                <div key={i} style={{ marginBottom: 7 }}>
                                   {parseBold(lineWithDiapositiva)}
                                 </div>
                               );
