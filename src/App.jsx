@@ -386,7 +386,7 @@ Si explicas algo, usa ejemplos simples y frases cortas.
     setMessage("");
 
     try {
-      const response = await fetch('http://localhost:3001/api/chat', {
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -453,7 +453,7 @@ Responde en español e incluye:
 Organiza visualmente tu respuesta con títulos, viñetas y negritas.
 `;
     try {
-      const response = await fetch('http://localhost:3001/api/chat', {
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -501,7 +501,7 @@ Descripción de la mejora: ${dmamaForm.descripcion}
 Organiza tu respuesta en bloques visuales, usando títulos, viñetas y negritas. Sé claro, breve y directo, como si hablaras con personas sin experiencia técnica.
 `;
     try {
-      const response = await fetch('http://localhost:3001/api/chat', {
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
