@@ -321,7 +321,7 @@ NO respondas de otra forma ni mezcles los apartados en un solo párrafo. Si no p
     setChat(prev => [...prev, userMessage]);
     setMessage("");
     try {
-  const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
