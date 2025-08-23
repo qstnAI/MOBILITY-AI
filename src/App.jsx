@@ -58,14 +58,6 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       fontSize: '22px',
       fontWeight: '900',
       lineHeight: '1.1',
-      letterSpacing: '0.5px',
-      fontFamily: "'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      textShadow: '0 1px 0 #f3e9f8',
-    },
-    tabs: {
-      display: 'flex',
-      justifyContent: 'center',
-      gap: '12px',
       marginBottom: '28px',
       padding: '0 4px',
       flexWrap: 'wrap',
@@ -112,116 +104,6 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       fontWeight: 400,
       position: 'relative',
       zIndex: 1,
-    },
-    chatContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      padding: '32px 32px 22px 32px',
-      minHeight: '420px',
-      maxHeight: '60vh',
-      overflowY: 'auto',
-      alignItems: 'flex-start',
-      justifyContent: 'flex-end',
-      background: '#fff',
-      border: '1.5px solid #ece6f3',
-      borderRadius: '16px',
-      boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
-    },
-    chatInputRow: {
-      display: 'flex',
-      gap: 12,
-      marginTop: 18,
-      marginLeft: 4,
-      marginRight: 4,
-    },
-    chatInput: {
-      flex: 1,
-      padding: '12px 16px',
-      borderRadius: '20px',
-      border: '1.5px solid #e0e0e0',
-      fontSize: '15px',
-      outline: 'none',
-      background: '#fff',
-      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
-    },
-    chatButton: {
-      background: '#632569',
-      color: 'white',
-      border: 'none',
-      borderRadius: '50%',
-      width: 40,
-      height: 40,
-      minWidth: 40,
-      minHeight: 40,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: 20,
-      fontWeight: 'bold',
-      cursor: 'pointer',
-      boxShadow: '0 2px 8px 0 rgba(99,37,105,0.10)',
-      transition: 'all 0.18s',
-    },
-    input: {
-      width: '100%',
-      padding: '14px 16px',
-      border: '1.5px solid #e0e0e0',
-      borderRadius: '10px',
-      marginBottom: '14px',
-      fontSize: '15px',
-      outline: 'none',
-      fontFamily: 'inherit',
-      background: '#faf9fb',
-      transition: 'border 0.18s',
-      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
-    },
-    textarea: {
-      width: '100%',
-      padding: '14px 16px',
-      border: '1.5px solid #e0e0e0',
-      borderRadius: '10px',
-      marginBottom: '14px',
-      fontSize: '15px',
-      minHeight: '80px',
-      resize: 'vertical',
-      outline: 'none',
-      fontFamily: 'inherit',
-      background: '#faf9fb',
-      transition: 'border 0.18s',
-      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
-    },
-    button: {
-      background: 'linear-gradient(90deg, #632569 60%, #a084b6 100%)',
-      color: 'white',
-      border: 'none',
-      padding: '12px 28px',
-      borderRadius: '10px',
-      cursor: 'pointer',
-      fontSize: '15px',
-      fontWeight: 'bold',
-      margin: '8px',
-      transition: 'all 0.18s',
-      boxShadow: '0 2px 8px 0 rgba(99,37,105,0.10)',
-    },
-    resultCard: {
-      background: '#f8f9fa',
-      borderRadius: '16px',
-      padding: '22px 18px',
-      marginTop: '18px',
-      border: 'none',
-      boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
-    },
-    card: {
-      background: 'none',
-      boxShadow: 'none',
-      border: 'none',
-      padding: 0,
-      margin: '0 auto',
-      maxWidth: 650,
-      marginTop: 8,
-      marginLeft: 8,
-      marginRight: 8,
     },
   };
 
@@ -439,7 +321,7 @@ NO respondas de otra forma ni mezcles los apartados en un solo párrafo. Si no p
     setChat(prev => [...prev, userMessage]);
     setMessage("");
     try {
-      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+  const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -489,7 +371,7 @@ Responde en español e incluye:
 Organiza visualmente tu respuesta con títulos, viñetas y negritas.
 `;
     try {
-      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+  const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -541,73 +423,73 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1
-          style={{
-            ...styles.mainTitle,
-            position: 'relative',
-            fontSize: '2.2rem',
-            letterSpacing: '1.2px',
-            fontWeight: 900,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            zIndex: 1,
-          }}
-        >
-          <span style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '100%',
-            height: '110%',
-            zIndex: 0,
-            borderRadius: 18,
-            background: 'linear-gradient(90deg, #ff9800 0%, #e53935 30%, #a084b6 60%, #00bcd4 100%)',
-            filter: 'blur(12px) brightness(1.2)',
-            opacity: 0.55,
-            animation: 'shinebg 3.5s linear infinite',
-          }} />
-          <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 2, position: 'relative', top: '2px', zIndex: 2 }}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle' }}>
-              <defs>
-                <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#ff9800"/>
-                  <stop offset="0.3" stopColor="#e53935"/>
-                  <stop offset="0.6" stopColor="#a084b6"/>
-                  <stop offset="1" stopColor="#00bcd4"/>
-                </linearGradient>
-              </defs>
-              <circle cx="16" cy="16" r="15" stroke="url(#logoGrad)" strokeWidth="2.5" fill="#fff"/>
-              <ellipse cx="16" cy="16" rx="10" ry="15" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
-              <ellipse cx="16" cy="16" rx="15" ry="5" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
-              <path d="M6 16h20" stroke="url(#logoGrad)" strokeWidth="1.5"/>
-              <path d="M16 2v28" stroke="url(#logoGrad)" strokeWidth="1.5"/>
-            </svg>
-          </span>
-          <span style={{
-            position: 'relative',
-            zIndex: 2,
-            padding: '0 12px',
-            color: '#632569',
-            textShadow: '0 2px 12px #fff, 0 1px 0 #e0c6f7, 0 0px 18px #a084b6',
-            fontWeight: 900,
-            letterSpacing: '1.2px',
-            fontFamily: 'Montserrat, Inter, sans-serif',
-            filter: 'drop-shadow(0 2px 8px #fff6)',
-          }}>
-            MOBILITY AI
-          </span>
-          <style>{`
-            @keyframes shinebg {
-              0% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
-              50% { filter: blur(18px) brightness(1.4); opacity: 0.75; }
-              100% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
-            }
-          `}</style>
-        </h1>
+          <h1
+            style={{
+              ...styles.mainTitle,
+              position: 'relative',
+              fontSize: '2.2rem',
+              letterSpacing: '1.2px',
+              fontWeight: 900,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              zIndex: 1,
+            }}
+          >
+            <span style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '100%',
+              height: '110%',
+              zIndex: 0,
+              borderRadius: 18,
+              background: 'linear-gradient(90deg, #ff9800 0%, #e53935 30%, #a084b6 60%, #00bcd4 100%)',
+              filter: 'blur(12px) brightness(1.2)',
+              opacity: 0.55,
+              animation: 'shinebg 3.5s linear infinite',
+            }} />
+            <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 2, position: 'relative', top: '2px', zIndex: 2 }}>
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle' }}>
+                <defs>
+                  <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ff9800"/>
+                    <stop offset="0.3" stopColor="#e53935"/>
+                    <stop offset="0.6" stopColor="#a084b6"/>
+                    <stop offset="1" stopColor="#00bcd4"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="16" cy="16" r="15" stroke="url(#logoGrad)" strokeWidth="2.5" fill="#fff"/>
+                <ellipse cx="16" cy="16" rx="10" ry="15" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
+                <ellipse cx="16" cy="16" rx="15" ry="5" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
+                <path d="M6 16h20" stroke="url(#logoGrad)" strokeWidth="1.5"/>
+                <path d="M16 2v28" stroke="url(#logoGrad)" strokeWidth="1.5"/>
+              </svg>
+            </span>
+            <span style={{
+              position: 'relative',
+              zIndex: 2,
+              padding: '0 12px',
+              color: '#632569',
+              textShadow: '0 2px 12px #fff, 0 1px 0 #e0c6f7, 0 0px 18px #a084b6',
+              fontWeight: 900,
+              letterSpacing: '1.2px',
+              fontFamily: 'Montserrat, Inter, sans-serif',
+              filter: 'drop-shadow(0 2px 8px #fff6)',
+            }}>
+              MOBILITY AI
+            </span>
+            <style>{`
+              @keyframes shinebg {
+                0% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
+                50% { filter: blur(18px) brightness(1.4); opacity: 0.75; }
+                100% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
+              }
+            `}</style>
+          </h1>
         <div style={{
           width: '100%',
           margin: '0 auto 12px auto',
@@ -1114,37 +996,15 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
               }}>
                 {/* Icono de bombilla inspiradora */}
                 <div style={{position:'absolute',top:18,right:24,opacity:0.13,fontSize:110,lineHeight:1,fontWeight:900,color:'#00bcd4',pointerEvents:'none',zIndex:0}}>💡</div>
+// ...existing code...
                 <div style={{position:'absolute',bottom:18,left:24,opacity:0.10,fontSize:80,lineHeight:1,fontWeight:900,color:'#a084b6',pointerEvents:'none',zIndex:0}}>🚀</div>
-                <div style={{position:'relative',zIndex:1}}>
-                  {(() => {
-                    // Elimina asteriscos, gatos y emojis
-                    let clean = dmamaResult
-                      .replace(/[\*#]/g, '')
-                      .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
-                    // Resalta en negritas las líneas que empiezan con número y punto y los nombres de las fases DMAMA
-                    return clean.split(/\r?\n/).map((line, idx) => {
-                      if (/^\d+\./.test(line.trim())) {
-                        return <div key={idx} style={{fontWeight:900, color:'#00bcd4', fontSize:18, margin:'14px 0 6px 0', letterSpacing:0.5}}><strong>{line.trim()}</strong></div>;
-                      }
-                      // Resalta nombres de fases DMAMA
-                      const dmamaPhases = ["Definir", "Medir", "Analizar", "Mejorar", "Asegurar"];
-                      let phaseFound = dmamaPhases.find(phase => line.trim().toLowerCase().startsWith(phase.toLowerCase()+':'));
-                      if (phaseFound) {
-                        const [phase, ...rest] = line.split(':');
-                        return <div key={idx}><strong style={{color:'#a084b6'}}>{phase.trim()}:</strong>{rest.join(':')}</div>;
-                      }
-                      // Resalta el título 'Guía de Mejora con DMAMA para ...'
-                      if (/^Guía de Mejora con DMAMA para /i.test(line.trim())) {
-                        return <div key={idx} style={{fontWeight:900, color:'#00bcd4', fontSize:20, margin:'18px 0 10px 0', letterSpacing:0.5}}><strong>{line.trim()}</strong></div>;
-                      }
-                      return <div key={idx}>{line}</div>;
-                    });
-                  })()}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+                                <div style={{position:'relative',zIndex:1}}>
+                                  {renderDocuResult(documentationResult)}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
 
       </main>
     </div>
