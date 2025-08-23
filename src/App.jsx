@@ -1,3 +1,87 @@
+// Función específica para renderizar resultados de DocuIA (DMAMA)
+function renderDmamaResult(text) {
+  if (!text) return null;
+  
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const blocks = [];
+  let currentList = [];
+
+  // Patrones para identificar títulos en DocuIA
+  const titlePatterns = [
+    /^\d+\.\s+[A-ZÁÉÍÓÚÑ]/i, // 1. PLANTEAMIENTO, 2. OBJETIVO, etc.
+    /^[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+:$/i, // Títulos en mayúsculas con dos puntos
+    /^(?:PLANTEAMIENTO|OBJETIVO|INDICADORES|HERRAMIENTAS|TIPS|DEFINIR|MEDIR|ANALIZAR|MEJORAR|ASEGURAR)/i
+  ];
+
+  lines.forEach((line, idx) => {
+    const isTitle = titlePatterns.some(pattern => pattern.test(line));
+    const isBullet = /^[-•*➢›]/.test(line);
+    
+    if (isTitle) {
+      // Renderizar lista pendiente si existe
+      if (currentList.length > 0) {
+        blocks.push(<ul key={`list-${idx}`} style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+        currentList = [];
+      }
+      
+      // Renderizar título
+      blocks.push(
+        <div key={`title-${idx}`} style={{
+          fontWeight: 900,
+          color: '#00838f',
+          fontSize: '18px',
+          margin: '20px 0 8px 0',
+          padding: '8px 12px',
+          background: 'rgba(0, 131, 143, 0.1)',
+          borderRadius: '8px',
+          borderLeft: '4px solid #00838f'
+        }}>
+          {line}
+        </div>
+      );
+    } 
+    else if (isBullet) {
+      // Líneas con viñetas
+      const bulletContent = line.replace(/^[-•*➢›]\s*/, '');
+      currentList.push(
+        <li key={`item-${currentList.length}`} style={{
+          marginBottom: '6px',
+          lineHeight: '1.5',
+          fontSize: '16px',
+          padding: '2px 0'
+        }}>
+          {bulletContent}
+        </li>
+      );
+    }
+    else if (line) {
+      // Renderizar lista pendiente si existe
+      if (currentList.length > 0) {
+        blocks.push(<ul key={`list-${idx}`} style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+        currentList = [];
+      }
+      
+      // Texto normal
+      blocks.push(
+        <div key={`text-${idx}`} style={{
+          marginBottom: '8px',
+          lineHeight: '1.6',
+          fontSize: '16px',
+          padding: '4px 0'
+        }}>
+          {line}
+        </div>
+      );
+    }
+  });
+
+  // Renderizar cualquier lista pendiente al final
+  if (currentList.length > 0) {
+    blocks.push(<ul key="list-final" style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+  }
+
+  return blocks;
+}
 import { useState, useEffect } from "react";
 
 export default function App() {
@@ -35,7 +119,6 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
   });
   const [documentationResult, setDocumentationResult] = useState("");
 
-
   // Estilos (puedes personalizar)
   const styles = {
     container: {
@@ -58,6 +141,14 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       fontSize: '22px',
       fontWeight: '900',
       lineHeight: '1.1',
+      letterSpacing: '0.5px',
+      fontFamily: "'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      textShadow: '0 1px 0 #f3e9f8',
+    },
+    tabs: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '12px',
       marginBottom: '28px',
       padding: '0 4px',
       flexWrap: 'wrap',
@@ -83,13 +174,15 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       color: 'white',
       borderRadius: '14px',
       padding: '10px 18px',
-      maxWidth: '80%',
+      maxWidth: '95vw',
+      boxSizing: 'border-box',
       boxShadow: '0 4px 18px 0 rgba(99,37,105,0.13)',
       fontSize: '15px',
       marginBottom: 10,
       fontWeight: 400,
       position: 'relative',
       zIndex: 1,
+      wordBreak: 'break-word',
     },
     bubbleUser: {
       alignSelf: 'flex-end',
@@ -97,13 +190,134 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       color: 'white',
       borderRadius: '14px',
       padding: '10px 18px',
-      maxWidth: '80%',
+      maxWidth: '95vw',
+      boxSizing: 'border-box',
       boxShadow: '0 4px 18px 0 rgba(99,37,105,0.10)',
       fontSize: '15px',
       marginBottom: 10,
       fontWeight: 400,
       position: 'relative',
       zIndex: 1,
+      wordBreak: 'break-word',
+    },
+    chatContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      padding: '32px 8vw 22px 8vw',
+      minHeight: '320px',
+      maxHeight: '60vh',
+      overflowY: 'auto',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-end',
+      background: '#fff',
+      border: '1.5px solid #ece6f3',
+      borderRadius: '16px',
+      boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
+      boxSizing: 'border-box',
+    },
+    chatInputRow: {
+      display: 'flex',
+      gap: 8,
+      marginTop: 18,
+      marginLeft: 4,
+      marginRight: 4,
+      flexDirection: 'row',
+    },
+    chatInput: {
+      flex: 1,
+      padding: '12px 16px',
+      borderRadius: '20px',
+      border: '1.5px solid #e0e0e0',
+      fontSize: '15px',
+      outline: 'none',
+      background: '#fff',
+      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
+      minWidth: 0,
+    },
+    chatButton: {
+      background: '#632569',
+      color: 'white',
+      border: 'none',
+      borderRadius: '50%',
+      width: 40,
+      height: 40,
+      minWidth: 40,
+      minHeight: 40,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 20,
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      boxShadow: '0 2px 8px 0 rgba(99,37,105,0.10)',
+      transition: 'all 0.18s',
+    },
+    input: {
+      width: '100%',
+      padding: '14px 16px',
+      border: '1.5px solid #e0e0e0',
+      borderRadius: '10px',
+      marginBottom: '14px',
+      fontSize: '15px',
+      outline: 'none',
+      fontFamily: 'inherit',
+      background: '#faf9fb',
+      transition: 'border 0.18s',
+      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
+      boxSizing: 'border-box',
+    },
+    textarea: {
+      width: '100%',
+      padding: '14px 16px',
+      border: '1.5px solid #e0e0e0',
+      borderRadius: '10px',
+      marginBottom: '14px',
+      fontSize: '15px',
+      minHeight: '80px',
+      resize: 'vertical',
+      outline: 'none',
+      fontFamily: 'inherit',
+      background: '#faf9fb',
+      transition: 'border 0.18s',
+      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
+      boxSizing: 'border-box',
+    },
+    button: {
+      background: 'linear-gradient(90deg, #632569 60%, #a084b6 100%)',
+      color: 'white',
+      border: 'none',
+      padding: '12px 28px',
+      borderRadius: '10px',
+      cursor: 'pointer',
+      fontSize: '15px',
+      fontWeight: 'bold',
+      margin: '8px',
+      transition: 'all 0.18s',
+      boxShadow: '0 2px 8px 0 rgba(99,37,105,0.10)',
+      boxSizing: 'border-box',
+    },
+    resultCard: {
+      background: '#f8f9fa',
+      borderRadius: '16px',
+      padding: '22px 4vw',
+      marginTop: '18px',
+      border: 'none',
+      boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
+      boxSizing: 'border-box',
+    },
+    card: {
+      background: 'none',
+      boxShadow: 'none',
+      border: 'none',
+      padding: 0,
+      margin: '0 auto',
+      maxWidth: 650,
+      marginTop: 8,
+      marginLeft: 8,
+      marginRight: 8,
+      width: '100%',
+      boxSizing: 'border-box',
     },
   };
 
@@ -200,9 +414,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     const titleRegex = /^(RESUMEN DEL VALOR DE LA IDEA|SUGERENCIAS DE MEJORA|RIESGOS O DESAFÍOS A CONSIDERAR|PASOS INICIALES RECOMENDADOS|✅ KPI CLARO Y MEDIBLE PARA EVALUAR RESULTADOS)$/i;
     let afterTitle = false;
     let lastTitle = '';
+    // Función para limpiar #, *, - al inicio de línea
+    const cleanSymbols = (str) => str.replace(/^[#*\-\s]+/, '').trim();
     lines.forEach(line => {
-      // Elimina asteriscos, gatos y otros símbolos especiales
-      const cleanLine = line.replace(/[\*#]+/g, '').trim();
+      const cleanLine = cleanSymbols(line);
       if (titleRegex.test(cleanLine)) {
         if (currentList.length) {
           blocks.push(<div style={{ margin: '8px 0 12px 0', paddingLeft: 12 }}>{currentList}</div>);
@@ -212,8 +427,9 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
         lastTitle = currentTitle;
         blocks.push(<div style={{ fontWeight: 900, color: '#632569', fontSize: 17, margin: '16px 0 4px 0', letterSpacing: 0.5 }}>{currentTitle}</div>);
         afterTitle = true;
-      } else if (/^[-•]/.test(cleanLine)) {
-        currentList.push(<div style={{ marginBottom: 4 }}>- {cleanLine.replace(/^[-•]\s*/, '')}</div>);
+      } else if (/^[-•]/.test(line)) {
+        // Eliminar guión y punto de viñeta, solo mostrar el texto limpio
+        currentList.push(<div style={{ marginBottom: 4 }}>{cleanSymbols(line)}</div>);
         afterTitle = false;
       } else if (cleanLine) {
         if (afterTitle) {
@@ -221,7 +437,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
           if (lastTitle === 'RESUMEN DEL VALOR DE LA IDEA') {
             currentList.push(<div style={{ marginBottom: 4 }}>{cleanLine}</div>);
           } else {
-            currentList.push(<div style={{ marginBottom: 4 }}>- {cleanLine}</div>);
+            currentList.push(<div style={{ marginBottom: 4 }}>{cleanLine}</div>);
           }
           afterTitle = false;
         } else {
@@ -239,43 +455,154 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     return blocks;
   }
 
-  // Prompts
-  const companyContext = `Eres Mobility AI, el asistente digital de mejora continua e innovación para los equipos internos de Mobility ADO.
-Tu propósito es ayudar a los colaboradores a generar ideas, resolver retos, estructurar propuestas de mejora, sugerir KPIs, detectar riesgos y acompañar procesos de innovación.
-No eres un asistente de ventas ni de atención a clientes externos, no vendes boletos ni productos.
-Responde siempre de forma clara, sencilla y breve, usando títulos, viñetas y negritas cuando sea útil.
-Evita lenguaje comercial o de ventas. Habla como un coach interno de innovación y mejora continua.
+  // Función específica para renderizar resultados de DocuIA (DMAMA) - Versión limpia
+  function renderDmamaResult(text) {
+    if (!text) return null;
+  
+    // Función para parsear negritas de markdown
+    const parseMarkdown = (text) => {
+      if (!text) return text;
+    
+      // Convertir **texto** a <strong>texto</strong>
+      const parts = [];
+      const regex = /\*\*(.*?)\*\*/g;
+      let lastIndex = 0;
+      let match;
+    
+      while ((match = regex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(text.slice(lastIndex, match.index));
+        }
+        parts.push(<strong key={match.index}>{match[1]}</strong>);
+        lastIndex = regex.lastIndex;
+      }
+    
+      if (lastIndex < text.length) {
+        parts.push(text.slice(lastIndex));
+      }
+    
+      return parts.length > 0 ? parts : text;
+    };
 
-Misión de MobilityADO: "Mejoramos la calidad de vida a través de la movilidad".
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const blocks = [];
+    let currentList = [];
 
-QUEREMOS:
-• Hacer que todos los viajes sean fáciles y accesibles
-• Promover la educación sobre movilidad
-• Compartir información para acelerar nuestro éxito comercial
-• Buscar el avance humano al construir comunidades
-• Hacer que disfrutes todos tus viajes
-• Que menos sea más
-• Ser parte del futuro de los diferentes modos de transporte
+    // Patrones para identificar títulos (ahora más flexibles)
+    const titlePatterns = [
+      /^[🔎🎯📊🛠️💡]?\s*[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+:/i, // Títulos con dos puntos
+      /^[🔎🎯📊🛠️💡]?\s*[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+\s*$/i, // Títulos solos
+      /^(planteamiento|objetivo|indicadores|herramientas|tips|definir|medir|analizar|mejorar|asegurar)/i
+    ];
 
-La colaboración entre áreas es fundamental para el éxito de cualquier iniciativa. Si consideras que para resolver un reto o potenciar una idea sería útil involucrar a otra área o equipo, sugiere explícitamente cuál podría ser y por qué, para fomentar el trabajo conjunto y mejores resultados.
-`;
+    lines.forEach((line, idx) => {
+      if (!line.trim()) return;
+
+      const cleanLine = line.replace(/^[🔎🎯📊🛠️💡]\s*/, ''); // Quitar emojis pero mantener texto
+      const isTitle = titlePatterns.some(pattern => pattern.test(cleanLine));
+      const isBullet = /^[-•]/.test(line);
+    
+      if (isTitle) {
+        // Renderizar lista pendiente si existe
+        if (currentList.length > 0) {
+          blocks.push(<ul key={`list-${idx}`} style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+          currentList = [];
+        }
+      
+        // Renderizar título en NEGRITA (parseando markdown)
+        blocks.push(
+          <div key={`title-${idx}`} style={{
+            fontWeight: 900,
+            color: '#00838f',
+            fontSize: '18px',
+            margin: '20px 0 10px 0',
+            padding: '10px 0',
+            borderBottom: '2px solid #00838f'
+          }}>
+            {parseMarkdown(cleanLine)}
+          </div>
+        );
+      } 
+      else if (isBullet) {
+        // Líneas con viñetas
+        const bulletContent = line.replace(/^[-•]\s*/, '');
+        currentList.push(
+          <li key={`item-${currentList.length}`} style={{
+            marginBottom: '6px',
+            lineHeight: '1.5',
+            fontSize: '16px',
+            padding: '2px 0'
+          }}>
+            {parseMarkdown(bulletContent)}
+          </li>
+        );
+      }
+      else if (line) {
+        // Renderizar lista pendiente si existe
+        if (currentList.length > 0) {
+          blocks.push(<ul key={`list-${idx}`} style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+          currentList = [];
+        }
+      
+        // Texto normal (parseando markdown)
+        blocks.push(
+          <div key={`text-${idx}`} style={{
+            marginBottom: '8px',
+            lineHeight: '1.6',
+            fontSize: '16px',
+            padding: '4px 0'
+          }}>
+            {parseMarkdown(line)}
+          </div>
+        );
+      }
+    });
+
+    // Renderizar cualquier lista pendiente al final
+    if (currentList.length > 0) {
+      blocks.push(<ul key="list-final" style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+    }
+
+    return blocks;
+  }
+
+  // Prompts - CONTEXTO MEJORADO Y MÁS ESTRICTO
+  const companyContext = `Eres Mobility AI, el asistente digital de Mobility ADO. Eres amable, servicial y conoces profundamente la empresa.
+
+# CONTEXTO DE MOBILITY ADO:
+• **Misión**: "Mejoramos la calidad de vida a través de la movilidad"
+• **Somos líderes** en movilidad y transporte en México y Latinoamérica
+• **Principios clave**: seguridad, eficiencia, experiencia, innovación, sostenibilidad
+• **Enfoque**: hacer que los viajes sean fáciles y accesibles para todos
+
+# QUEREMOS:
+• Promover educación sobre movilidad
+• Compartir información para acelerar el éxito comercial  
+• Buscar el avance humano construyendo comunidades
+• Que menos sea más (simplicidad)
+• Ser parte del futuro del transporte
+
+# TU ESTILO:
+• Responde de forma natural y conversacional
+• Usa emojis moderadamente 😊
+• Sé útil en cualquier tema, pero cuando sea relevante menciona nuestro contexto
+• Si preguntan sobre Mobility ADO, comparte información precisa
+• Para temas de mejora continua e innovación, ofrece ideas específicas
+
+# NO NECESITAS:
+• Restringir temas de conversación
+• Ser demasiado formal
+• Repetir constantemente que eres de Mobility ADO
+
+Simplemente sé un asistente útil que conoce y ama su empresa.`;
 
   const docuContext = `Eres MOBILITY AI, asistente experto en innovación de Mobility ADO (líder en movilidad y transporte en México y Latinoamérica).
 Principios clave: seguridad, eficiencia, experiencia del cliente, innovación, mejora continua, sostenibilidad y cultura colaborativa.
-Instrucciones:
-Responde siempre alineado con misión, visión, valores y cultura de la empresa.
-Adapta tu análisis según el área:
-Comercial → clientes, ventas, satisfacción.
-Mantenimiento → eficiencia técnica, reducción de tiempos muertos.
-Operaciones → seguridad, puntualidad, logística.
-Finanzas/Administración → ahorro, control, eficiencia de costos.
-Recursos Humanos → motivación, cultura, desarrollo del talento.
-Otras áreas → claridad, profesionalismo, motivación.
 
-FORMATO ESTRICTO DE RESPUESTA (NO uses asteriscos, ni gatos, ni símbolos especiales para títulos o negritas. Los títulos deben ir al inicio de cada sección, en mayúsculas, y claramente diferenciados. Usa viñetas simples para listas):
+RESPONDE SIEMPRE EN ESPAÑOL con este formato estricto:
 
 RESUMEN DEL VALOR DE LA IDEA
-- (Breve descripción)
+- (Breve descripción del valor)
 
 SUGERENCIAS DE MEJORA
 - Sugerencia 1
@@ -294,26 +621,11 @@ PASOS INICIALES RECOMENDADOS
 ✅ KPI CLARO Y MEDIBLE PARA EVALUAR RESULTADOS
 - KPI sugerido
 
-EJEMPLO DE FORMATO:
-RESUMEN DEL VALOR DE LA IDEA
-- Esta propuesta ayuda a mejorar la eficiencia y la experiencia del cliente.
-SUGERENCIAS DE MEJORA
-- Implementar capacitación.
-- Medir resultados mensualmente.
-- Involucrar a otras áreas clave.
-RIESGOS O DESAFÍOS A CONSIDERAR
-- Resistencia al cambio.
-- Falta de recursos.
-PASOS INICIALES RECOMENDADOS
-- Presentar la idea al equipo.
-- Definir responsables.
-- Medir resultados.
-✅ KPI CLARO Y MEDIBLE PARA EVALUAR RESULTADOS
-- % de reducción de tiempos o errores.
+NO uses asteriscos, ni gatos, ni símbolos especiales para títulos o negritas.
+Los títulos deben ir al inicio de cada sección, en mayúsculas, y claramente diferenciados. 
+Usa viñetas simples para listas.`;
 
-NO respondas de otra forma ni mezcles los apartados en un solo párrafo. Si no puedes cumplir el formato, responde: "No puedo cumplir el formato solicitado".`;
-
-  // Handlers principales (debes adaptar las URLs a tu backend si es necesario)
+  // Handlers principales - CORREGIDOS
   const sendMessage = async () => {
     if (!message.trim()) return;
     setIsLoading(true);
@@ -321,21 +633,28 @@ NO respondas de otra forma ni mezcles los apartados en un solo párrafo. Si no p
     setChat(prev => [...prev, userMessage]);
     setMessage("");
     try {
-      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+      const promptWithContext = `${companyContext}\n\nUsuario: ${message}`;
+      
+      // CAMBIA ESTO: usa /api/dmama en lugar de /api/chat
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/dmama', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        // CAMBIA EL BODY: usa "prompt" en lugar de "messages"
         body: JSON.stringify({
-          messages: [
-            { role: "system", content: companyContext },
-            { role: "user", content: message }
-          ]
+          prompt: promptWithContext  // ← ESTE ES EL CAMBIO CLAVE
         }),
       });
+      
       if (!response.ok) throw new Error('Error de conexión');
       const data = await response.json();
+      
       setChat(prev => [...prev, { sender: "ai", text: data.response }]);
+      
     } catch (error) {
-      setChat(prev => [...prev, { sender: "ai", text: "❌ Error: No se pudo conectar al servidor." }]);
+      setChat(prev => [...prev, { 
+        sender: "ai", 
+        text: "❌ Error de conexión. Por favor, intenta nuevamente." 
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -357,26 +676,21 @@ NO respondas de otra forma ni mezcles los apartados en un solo párrafo. Si no p
     setDocumentationResult("");
     const prompt = `
 ${docuContext}
+
 Analiza la siguiente propuesta de mejora:
 👤 Colaborador: ${formData.collaborator || "No especificado"}
 🏢 Área: ${formData.area || "No especificado"}
 ❗ Problema detectado: ${formData.problem || "No especificado"}
 💡 Propuesta de mejora: ${formData.proposal || "No especificado"}
-Responde en español e incluye:
-1. Un breve resumen del valor de la idea.
-2. 2–3 sugerencias específicas de mejora.
-3. Riesgos o desafíos a considerar.
-4. Pasos iniciales recomendados.
-5. ✅ Un KPI (indicador de éxito) claro y medible para evaluar resultados.
-Organiza visualmente tu respuesta con títulos, viñetas y negritas.
+
+Responde estrictamente con el formato solicitado.
 `;
     try {
-  const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [
-            { role: "system", content: docuContext },
             { role: "user", content: prompt }
           ]
         }),
@@ -423,73 +737,73 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-          <h1
-            style={{
-              ...styles.mainTitle,
-              position: 'relative',
-              fontSize: '2.2rem',
-              letterSpacing: '1.2px',
-              fontWeight: 900,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 10,
-              zIndex: 1,
-            }}
-          >
-            <span style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '100%',
-              height: '110%',
-              zIndex: 0,
-              borderRadius: 18,
-              background: 'linear-gradient(90deg, #ff9800 0%, #e53935 30%, #a084b6 60%, #00bcd4 100%)',
-              filter: 'blur(12px) brightness(1.2)',
-              opacity: 0.55,
-              animation: 'shinebg 3.5s linear infinite',
-            }} />
-            <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 2, position: 'relative', top: '2px', zIndex: 2 }}>
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle' }}>
-                <defs>
-                  <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#ff9800"/>
-                    <stop offset="0.3" stopColor="#e53935"/>
-                    <stop offset="0.6" stopColor="#a084b6"/>
-                    <stop offset="1" stopColor="#00bcd4"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="16" cy="16" r="15" stroke="url(#logoGrad)" strokeWidth="2.5" fill="#fff"/>
-                <ellipse cx="16" cy="16" rx="10" ry="15" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
-                <ellipse cx="16" cy="16" rx="15" ry="5" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
-                <path d="M6 16h20" stroke="url(#logoGrad)" strokeWidth="1.5"/>
-                <path d="M16 2v28" stroke="url(#logoGrad)" strokeWidth="1.5"/>
-              </svg>
-            </span>
-            <span style={{
-              position: 'relative',
-              zIndex: 2,
-              padding: '0 12px',
-              color: '#632569',
-              textShadow: '0 2px 12px #fff, 0 1px 0 #e0c6f7, 0 0px 18px #a084b6',
-              fontWeight: 900,
-              letterSpacing: '1.2px',
-              fontFamily: 'Montserrat, Inter, sans-serif',
-              filter: 'drop-shadow(0 2px 8px #fff6)',
-            }}>
-              MOBILITY AI
-            </span>
-            <style>{`
-              @keyframes shinebg {
-                0% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
-                50% { filter: blur(18px) brightness(1.4); opacity: 0.75; }
-                100% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
-              }
-            `}</style>
-          </h1>
+        <h1
+          style={{
+            ...styles.mainTitle,
+            position: 'relative',
+            fontSize: '2.2rem',
+            letterSpacing: '1.2px',
+            fontWeight: 900,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            zIndex: 1,
+          }}
+        >
+          <span style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: '100%',
+            height: '110%',
+            zIndex: 0,
+            borderRadius: 18,
+            background: 'linear-gradient(90deg, #ff9800 0%, #e53935 30%, #a084b6 60%, #00bcd4 100%)',
+            filter: 'blur(12px) brightness(1.2)',
+            opacity: 0.55,
+            animation: 'shinebg 3.5s linear infinite',
+          }} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 2, position: 'relative', top: '2px', zIndex: 2 }}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle' }}>
+              <defs>
+                <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#ff9800"/>
+                  <stop offset="0.3" stopColor="#e53935"/>
+                  <stop offset="0.6" stopColor="#a084b6"/>
+                  <stop offset="1" stopColor="#00bcd4"/>
+                </linearGradient>
+              </defs>
+              <circle cx="16" cy="16" r="15" stroke="url(#logoGrad)" strokeWidth="2.5" fill="#fff"/>
+              <ellipse cx="16" cy="16" rx="10" ry="15" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
+              <ellipse cx="16" cy="16" rx="15" ry="5" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
+              <path d="M6 16h20" stroke="url(#logoGrad)" strokeWidth="1.5"/>
+              <path d="M16 2v28" stroke="url(#logoGrad)" strokeWidth="1.5"/>
+            </svg>
+          </span>
+          <span style={{
+            position: 'relative',
+            zIndex: 2,
+            padding: '0 12px',
+            color: '#632569',
+            textShadow: '0 2px 12px #fff, 0 1px 0 #e0c6f7, 0 0px 18px #a084b6',
+            fontWeight: 900,
+            letterSpacing: '1.2px',
+            fontFamily: 'Montserrat, Inter, sans-serif',
+            filter: 'drop-shadow(0 2px 8px #fff6)',
+          }}>
+            MOBILITY AI
+          </span>
+          <style>{`
+            @keyframes shinebg {
+              0% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
+              50% { filter: blur(18px) brightness(1.4); opacity: 0.75; }
+              100% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
+            }
+          `}</style>
+        </h1>
         <div style={{
           width: '100%',
           margin: '0 auto 12px auto',
@@ -519,6 +833,26 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
         </div>
         {/* Barra roja divisor */}
         <div style={{ width: '100%', maxWidth: 650, height: 5, margin: '0 auto 18px auto', background: '#e53935', borderRadius: 3, boxShadow: '0 1px 6px 0 #e5393533' }} />
+      {/* Texto informativo debajo de la franja roja */}
+      <div style={{
+        width: '100%',
+        maxWidth: 650,
+        margin: '0 auto 14px auto',
+        textAlign: 'center',
+        fontSize: 11.5,
+        color: '#888',
+        fontWeight: 400,
+        letterSpacing: 0.1,
+        fontFamily: 'Inter, Arial, sans-serif',
+        background: 'rgba(255,255,255,0.85)',
+        borderRadius: 8,
+        padding: '6px 0 5px 0',
+        boxShadow: '0 1px 8px 0 #a084b610',
+        fontStyle: 'italic',
+        lineHeight: 1.5,
+      }}>
+        Plataforma potenciada con Open AI para equipos de mejora continua en MOBILITY ADO
+      </div>
       </header>
       <div style={styles.tabs}>
         <button
@@ -609,17 +943,53 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
             e.preventDefault();
             setIsLoadingDmama(true);
             setDmamaResult('');
-            const prompt = `\nEres Mobility AI, el asistente oficial de Mobility ADO.\nAyuda a un colaborador a estructurar su idea de mejora usando la metodología DMAMA (Definir, Medir, Analizar, Mejorar, Asegurar).\n\nLa información del proyecto es:\n• Colaborador: ${dmamaForm.colaborador}\n• Área: ${dmamaForm.area}\n• Descripción de la mejora: ${dmamaForm.descripcion}\n\nGenera una guía breve, clara y visual con:\n\n1. 🔎 Planteamiento del Problema  \n   — Sugiérele cómo redactar su problema de manera estructurada (contexto, causa y efecto).  \n\n2. 🎯 Objetivo del Proyecto  \n   — Propón una forma simple y clara de escribir un objetivo (qué se quiere lograr y para qué).  \n\n3. 📊 Indicadores de Éxito  \n   — Propón 2 indicadores relevantes para medir el impacto del proyecto.  \n   — Solo indicadores, sin metas ni objetivos.  \n\n4. 🛠️ Herramientas Útiles  \n   — Recomienda 2 o 3 herramientas prácticas que le ayuden a documentar su proyecto (ej. Empathy Map, Diagrama de Ishikawa, Pareto, Customer Journey, prototipos rápidos).  \n\n5. 💡 Tips por Fase DMAMA  \n   — Da tips cortos, prácticos y accionables para cada fase:  \n     ✅ Definir: cómo enfocar bien el problema  \n     ✅ Medir: qué tipo de datos conviene recolectar  \n     ✅ Analizar: cómo detectar causas raíz  \n     ✅ Mejorar: cómo generar y elegir soluciones  \n     ✅ Asegurar: cómo estandarizar y dar seguimiento  \n\nEl resultado debe ser breve, ejecutivo y fácil de usar en una presentación o dashboard, usando frases cortas, bullets y emojis para hacerlo claro y atractivo.\n`;
-            const res = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ messages: [
-                { role: 'user', content: prompt }
-              ] }),
-            });
-            const data = await res.json();
-            setDmamaResult(data.response || 'No se pudo generar la guía.');
-            setIsLoadingDmama(false);
+            const prompt = `Eres Mobility AI, el asistente oficial de Mobility ADO.
+Ayuda a un colaborador a estructurar su idea de mejora usando la metodología DMAMA (Definir, Medir, Analizar, Mejorar, Asegurar).
+
+La información del proyecto es:
+• Colaborador: ${dmamaForm.colaborador}
+• Área: ${dmamaForm.area}
+• Descripción de la mejora: ${dmamaForm.descripcion}
+
+Genera una guía breve, clara y visual con:
+
+1. 🔎 Planteamiento del Problema  
+   — Sugiérele cómo redactar su problema de manera estructurada (contexto, causa y efecto).  
+
+2. 🎯 Objetivo del Proyecto  
+   — Propón una forma simple y clara de escribir un objetivo (qué se quiere lograr y para qué).  
+
+3. 📊 Indicadores de Éxito  
+   — Propón 2 indicadores relevantes para medir el impacto del proyecto.  
+   — Solo indicadores, sin metas ni objetivos.  
+
+4. 🛠️ Herramientas Útiles  
+   — Recomienda 2 o 3 herramientas prácticas que le ayuden a documentar su proyecto (ej. Empathy Map, Diagrama de Ishikawa, Pareto, Customer Journey, prototipos rápidos).  
+
+5. 💡 Tips por Fase DMAMA  
+   — Da tips cortos, prácticos y accionables para cada fase:  
+     ✅ Definir: cómo enfocar bien el problema  
+     ✅ Medir: qué tipo de datos conviene recolectar  
+     ✅ Analizar: cómo detectar causas raíz  
+     ✅ Mejorar: cómo generar y elegir soluciones  
+     ✅ Asegurar: cómo estandarizar y dar seguimiento  
+
+El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o dashboard, usando frases cortas, bullets y emojis para hacerlo claro y atractivo.`;
+            try {
+              const res = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [
+                  { role: 'user', content: prompt }
+                ] }),
+              });
+              const data = await res.json();
+              setDmamaResult(data.response || 'No se pudo generar la guía.');
+            } catch (error) {
+              setDmamaResult('❌ Error al generar la guía. Por favor, intenta nuevamente.');
+            } finally {
+              setIsLoadingDmama(false);
+            }
           }}>
             <div style={{ display: 'flex', gap: 16, marginBottom: 18, flexWrap: 'wrap' }}>
               <input
@@ -700,7 +1070,6 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
                 title="Limpiar formulario"
                 disabled={isLoadingDmama}
               >
-                {/* Icono refresh */}
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4.5 10A5.5 5.5 0 0115 7.5M15.5 10A5.5 5.5 0 015 12.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
                   <path d="M13.5 6V8H15.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
@@ -711,59 +1080,25 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
           </form>
           {dmamaResult && (
             <div style={{
-              background: 'linear-gradient(120deg, #e3f0ff 60%, #f8e9ff 100%)',
-              border: '2.5px solid #00bcd4',
-              borderRadius: 22,
-              boxShadow: '0 6px 32px 0 rgba(0,188,212,0.13), 0 1.5px 12px 0 #a084b655',
-              marginTop: 32,
-              padding: '36px 28px 30px 28px',
-              fontSize: 17,
+              background: 'linear-gradient(135deg, #f8f9fa 0%, #e8f4fd 100%)',
+              border: '2px solid #00838f',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 131, 143, 0.12)',
+              marginTop: '28px',
+              padding: '28px 24px',
+              fontSize: '16px',
               color: '#2a2950',
-              fontFamily: 'Montserrat, Inter, sans-serif',
-              lineHeight: 1.8,
-              fontWeight: 500,
-              position: 'relative',
-              overflow: 'hidden',
-              minHeight: 120,
-              maxWidth: 600,
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              transition: 'box-shadow 0.2s',
+              fontFamily: 'Inter, sans-serif',
+              lineHeight: '1.6',
             }}>
-              {/* Icono de bombilla inspiradora */}
-              <div style={{position:'absolute',top:18,right:24,opacity:0.13,fontSize:110,lineHeight:1,fontWeight:900,color:'#00bcd4',pointerEvents:'none',zIndex:0}}>💡</div>
-              <div style={{position:'absolute',bottom:18,left:24,opacity:0.10,fontSize:80,lineHeight:1,fontWeight:900,color:'#a084b6',pointerEvents:'none',zIndex:0}}>🚀</div>
               <div style={{position:'relative',zIndex:1}}>
-                {(() => {
-                  // Elimina asteriscos, gatos y emojis
-                  let clean = dmamaResult
-                    .replace(/[\*#]/g, '')
-                    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
-                  // Resalta en negritas las líneas que empiezan con número y punto y los nombres de las fases DMAMA
-                  return clean.split(/\r?\n/).map((line, idx) => {
-                    if (/^\d+\./.test(line.trim())) {
-                      return <div key={idx} style={{fontWeight:900, color:'#00bcd4', fontSize:18, margin:'14px 0 6px 0', letterSpacing:0.5}}><strong>{line.trim()}</strong></div>;
-                    }
-                    // Resalta nombres de fases DMAMA
-                    const dmamaPhases = ["Definir", "Medir", "Analizar", "Mejorar", "Asegurar"];
-                    let phaseFound = dmamaPhases.find(phase => line.trim().toLowerCase().startsWith(phase.toLowerCase()+':'));
-                    if (phaseFound) {
-                      const [phase, ...rest] = line.split(':');
-                      return <div key={idx}><strong style={{color:'#a084b6'}}>{phase.trim()}:</strong>{rest.join(':')}</div>;
-                    }
-                    // Resalta el título 'Guía de Mejora con DMAMA para ...'
-                    if (/^Guía de Mejora con DMAMA para /i.test(line.trim())) {
-                      return <div key={idx} style={{fontWeight:900, color:'#00bcd4', fontSize:20, margin:'18px 0 10px 0', letterSpacing:0.5}}><strong>{line.trim()}</strong></div>;
-                    }
-                    return <div key={idx}>{line}</div>;
-                  });
-                })()}
+                {renderDmamaResult(dmamaResult)}
               </div>
             </div>
           )}
         </div>
       )}
-      <main>
+  <main style={{width:'100%', boxSizing:'border-box'}}>
         {/* TAB 1: MOBILITY AI */}
         {activeTab === "ai" && (
           <div style={{
@@ -801,18 +1136,13 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
                 <div style={styles.bubbleAI}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <svg width="44" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'moveBus 1.2s linear infinite' }}>
-                      {/* Cuerpo del autobús rojo */}
                       <rect x="2" y="7" width="36" height="10" rx="3" fill="#e53935" stroke="#b71c1c" strokeWidth="1.5"/>
-                      {/* Ventanas */}
                       <rect x="6" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
                       <rect x="14.5" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
                       <rect x="23" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
-                      {/* Puerta */}
                       <rect x="32" y="10" width="4" height="6" rx="1.2" fill="#fff"/>
-                      {/* Ruedas */}
                       <circle cx="10" cy="19.5" r="2.2" fill="#222" stroke="#b71c1c" strokeWidth="0.7"/>
                       <circle cx="30" cy="19.5" r="2.2" fill="#222" stroke="#b71c1c" strokeWidth="0.7"/>
-                      {/* Detalles */}
                       <rect x="37.5" y="13" width="3" height="2.5" rx="0.8" fill="#b71c1c"/>
                       <rect x="2" y="13" width="2.5" height="2.5" rx="0.8" fill="#b71c1c"/>
                     </svg>
@@ -842,7 +1172,6 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
                 {isLoading ? (
                   <span style={{ fontSize: 22 }}>...</span>
                 ) : (
-                  // Flecha hacia arriba SVG
                   <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="11" cy="11" r="11" fill="#632569" />
                     <path d="M11 6V16" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
@@ -861,7 +1190,6 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
                 disabled={isLoading}
                 title="Reiniciar chat"
               >
-                {/* Espiral SVG */}
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="11" cy="11" r="11" fill="#e53935" />
                   <path d="M15.5 11C15.5 8.51472 13.4853 6.5 11 6.5C8.51472 6.5 6.5 8.51472 6.5 11C6.5 13.4853 8.51472 15.5 11 15.5C12.3807 15.5 13.5 14.3807 13.5 13C13.5 11.6193 12.3807 10.5 11 10.5C9.61929 10.5 8.5 11.6193 8.5 13" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
@@ -873,139 +1201,137 @@ Organiza visualmente tu respuesta con títulos, viñetas y negritas.
 
         {/* TAB 2: POTENCIADOR DE IDEAS */}
         {activeTab === "docu" && (
-          <div style={styles.card}>
-            <div style={{ textAlign: 'center', marginBottom: 10 }}>
-              <h2 style={{ color: '#632569', fontWeight: 800, fontSize: 22, margin: 0, letterSpacing: '0.5px' }}>Potenciador de Ideas</h2>
-              <div style={{ color: '#a084b6', fontSize: 15, marginTop: 2 }}>Completa el formulario y recibe sugerencias para mejorar tu propuesta.</div>
-              <div style={{ width: '100%', height: 1, background: '#ece6f3', margin: '18px 0 10px 0', borderRadius: 2 }} />
-            </div>
-            <input
-              name="collaborator"
-              value={formData.collaborator}
-              onChange={handleInputChange}
-              placeholder="Nombre del colaborador"
-              style={styles.input}
-              disabled={isLoading}
-            />
-            <input
-              name="area"
-              value={formData.area}
-              onChange={handleInputChange}
-              placeholder="Área o departamento"
-              style={styles.input}
-              disabled={isLoading}
-            />
-            <textarea
-              name="problem"
-              value={formData.problem}
-              onChange={handleInputChange}
-              placeholder="Describe el problema o oportunidad"
-              style={styles.textarea}
-              disabled={isLoading}
-            />
-            <textarea
-              name="proposal"
-              value={formData.proposal}
-              onChange={handleInputChange}
-              placeholder="Propuesta de solución o idea inicial"
-              style={styles.textarea}
-              disabled={isLoading}
-            />
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 0, margin: '18px 0 0 0' }}>
-              <button
-                onClick={handleDocumentationSubmit}
-                style={{
-                  background: 'linear-gradient(90deg, #ff9800 0%, #e53935 40%, #a084b6 80%, #00bcd4 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '20px',
-                  padding: '0 32px',
-                  fontSize: '16px',
-                  fontWeight: 900,
-                  letterSpacing: 0.5,
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 12px 0 rgba(99,37,105,0.13)',
-                  transition: 'all 0.18s',
-                  minHeight: 44,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: 0,
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <div style={{ ...styles.card, width: '100%', maxWidth: 600 }}>
+              <div style={{ textAlign: 'center', marginBottom: 10 }}>
+                <h2 style={{ color: '#632569', fontWeight: 800, fontSize: 22, margin: 0, letterSpacing: '0.5px' }}>Potenciador de Ideas</h2>
+                <div style={{ color: '#a084b6', fontSize: 15, marginTop: 2 }}>Completa el formulario y recibe sugerencias para mejorar tu propuesta.</div>
+                <div style={{ width: '100%', height: 1, background: '#ece6f3', margin: '18px 0 10px 0', borderRadius: 2 }} />
+              </div>
+              <input
+                name="collaborator"
+                value={formData.collaborator}
+                onChange={handleInputChange}
+                placeholder="Nombre del colaborador"
+                style={styles.input}
+                disabled={isLoading}
+              />
+              <input
+                name="area"
+                value={formData.area}
+                onChange={handleInputChange}
+                placeholder="Área o departamento"
+                style={styles.input}
+                disabled={isLoading}
+              />
+              <textarea
+                name="problem"
+                value={formData.problem}
+                onChange={handleInputChange}
+                placeholder="Describe el problema o oportunidad"
+                style={styles.textarea}
+                disabled={isLoading}
+              />
+              <textarea
+                name="proposal"
+                value={formData.proposal}
+                onChange={handleInputChange}
+                placeholder="Propuesta de solución o idea inicial"
+                style={styles.textarea}
+                disabled={isLoading}
+              />
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 0, margin: '18px 0 0 0' }}>
+                <button
+                  onClick={handleDocumentationSubmit}
+                  style={{
+                    background: 'linear-gradient(90deg, #ff9800 0%, #e53935 40%, #a084b6 80%, #00bcd4 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '20px',
+                    padding: '0 32px',
+                    fontSize: '16px',
+                    fontWeight: 900,
+                    letterSpacing: 0.5,
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 12px 0 rgba(99,37,105,0.13)',
+                    transition: 'all 0.18s',
+                    minHeight: 44,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: 0,
+                    fontFamily: 'Montserrat, Inter, sans-serif',
+                    textShadow: '0 1px 8px #fff3',
+                  }}
+                  disabled={isLoading}
+                >
+                  {isLoading ? '🔄 Potenciando...' : '🚀 Potenciar Idea'}
+                </button>
+                <button
+                  onClick={() => {
+                    setFormData({ collaborator: '', area: '', problem: '', proposal: '' });
+                    setDocumentationResult('');
+                  }}
+                  style={{
+                    background: '#e53935',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: 40,
+                    height: 40,
+                    minWidth: 40,
+                    minHeight: 40,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px 0 rgba(229,57,53,0.10)',
+                    transition: 'all 0.18s',
+                    marginLeft: 14,
+                  }}
+                  title="Limpiar formulario"
+                  disabled={isLoading}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 10A5.5 5.5 0 0115 7.5M15.5 10A5.5 5.5 0 015 12.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
+                    <path d="M13.5 6V8H15.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
+                    <path d="M6.5 14v-2H4.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+              {documentationResult && (
+                <div style={{
+                  background: 'linear-gradient(120deg, #e3f0ff 60%, #f8e9ff 100%)',
+                  border: '2.5px solid #00bcd4',
+                  borderRadius: 22,
+                  boxShadow: '0 6px 32px 0 rgba(0,188,212,0.13), 0 1.5px 12px 0 #a084b655',
+                  marginTop: 32,
+                  padding: '36px 28px 30px 28px',
+                  fontSize: 17,
+                  color: '#2a2950',
                   fontFamily: 'Montserrat, Inter, sans-serif',
-                  textShadow: '0 1px 8px #fff3',
-                }}
-                disabled={isLoading}
-              >
-                {isLoading ? '🔄 Potenciando...' : '🚀 Potenciar Idea'}
-              </button>
-              <button
-                onClick={() => {
-                  setFormData({ collaborator: '', area: '', problem: '', proposal: '' });
-                  setDocumentationResult('');
-                }}
-                style={{
-                  background: '#e53935',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: 40,
-                  height: 40,
-                  minWidth: 40,
-                  minHeight: 40,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px 0 rgba(229,57,53,0.10)',
-                  transition: 'all 0.18s',
-                  marginLeft: 14,
-                }}
-                title="Limpiar formulario"
-                disabled={isLoading}
-              >
-                {/* Icono refresh */}
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4.5 10A5.5 5.5 0 0115 7.5M15.5 10A5.5 5.5 0 015 12.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
-                  <path d="M13.5 6V8H15.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
-                  <path d="M6.5 14v-2H4.5" stroke="#fff" strokeWidth="1.7" strokeLinecap="round"/>
-                </svg>
-              </button>
+                  lineHeight: 1.8,
+                  fontWeight: 500,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  minHeight: 120,
+                  maxWidth: 600,
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  transition: 'box-shadow 0.2s',
+                }}>
+                  <div style={{position:'absolute',top:18,right:24,opacity:0.13,fontSize:110,lineHeight:1,fontWeight:900,color:'#00bcd4',pointerEvents:'none',zIndex:0}}>💡</div>
+                  <div style={{position:'absolute',bottom:18,left:24,opacity:0.10,fontSize:80,lineHeight:1,fontWeight:900,color:'#a084b6',pointerEvents:'none',zIndex:0}}>🚀</div>
+                  <div style={{position:'relative',zIndex:1}}>
+                    {renderDocuResult(documentationResult)}
+                  </div>
+                </div>
+              )}
             </div>
-            {documentationResult && (
-              <div style={{
-                background: 'linear-gradient(120deg, #e3f0ff 60%, #f8e9ff 100%)',
-                border: '2.5px solid #00bcd4',
-                borderRadius: 22,
-                boxShadow: '0 6px 32px 0 rgba(0,188,212,0.13), 0 1.5px 12px 0 #a084b655',
-                marginTop: 32,
-                padding: '36px 28px 30px 28px',
-                fontSize: 17,
-                color: '#2a2950',
-                fontFamily: 'Montserrat, Inter, sans-serif',
-                lineHeight: 1.8,
-                fontWeight: 500,
-                position: 'relative',
-                overflow: 'hidden',
-                minHeight: 120,
-                maxWidth: 600,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                transition: 'box-shadow 0.2s',
-              }}>
-                {/* Icono de bombilla inspiradora */}
-                <div style={{position:'absolute',top:18,right:24,opacity:0.13,fontSize:110,lineHeight:1,fontWeight:900,color:'#00bcd4',pointerEvents:'none',zIndex:0}}>💡</div>
-// ...existing code...
-                <div style={{position:'absolute',bottom:18,left:24,opacity:0.10,fontSize:80,lineHeight:1,fontWeight:900,color:'#a084b6',pointerEvents:'none',zIndex:0}}>🚀</div>
-                                <div style={{position:'relative',zIndex:1}}>
-                                  {renderDocuResult(documentationResult)}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
+          </div>
+        )}
       </main>
     </div>
   );
