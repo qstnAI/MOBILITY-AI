@@ -835,23 +835,32 @@ Responde estrictamente con el formato solicitado.
         <div style={{ width: '100%', maxWidth: 650, height: 5, margin: '0 auto 18px auto', background: '#e53935', borderRadius: 3, boxShadow: '0 1px 6px 0 #e5393533' }} />
       {/* Texto informativo debajo de la franja roja */}
       <div style={{
-        width: '100%',
+        width: '96vw',
         maxWidth: 650,
-        margin: '0 auto 14px auto',
+        minWidth: 0,
+        margin: '0 auto 12px auto',
         textAlign: 'center',
-        fontSize: 11.5,
+        fontSize: '3.2vw', // Escala en móviles, pero nunca mayor a 12px
         color: '#888',
         fontWeight: 400,
         letterSpacing: 0.1,
         fontFamily: 'Inter, Arial, sans-serif',
         background: 'rgba(255,255,255,0.85)',
         borderRadius: 8,
-        padding: '6px 0 5px 0',
+        padding: '4px 2vw 3px 2vw',
         boxShadow: '0 1px 8px 0 #a084b610',
         fontStyle: 'italic',
         lineHeight: 1.5,
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+        maxHeight: 36,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}>
-        Plataforma potenciada con Open AI para equipos de mejora continua en MOBILITY ADO
+        <span style={{fontSize:'min(3.2vw,12px)',width:'100%',display:'block'}}>
+          Plataforma potenciada con Open AI para equipos de mejora continua en MOBILITY ADO
+        </span>
       </div>
       </header>
       <div style={styles.tabs}>
