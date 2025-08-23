@@ -207,6 +207,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       padding: '32px 8vw 22px 8vw',
       minHeight: '320px',
       maxHeight: '60vh',
+      height: '60vh',
       overflowY: 'auto',
       alignItems: 'flex-start',
       justifyContent: 'flex-end',
@@ -215,6 +216,11 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       borderRadius: '16px',
       boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
       boxSizing: 'border-box',
+      WebkitOverflowScrolling: 'touch',
+      overscrollBehavior: 'contain',
+      touchAction: 'manipulation',
+      position: 'relative',
+      transition: 'height 0.2s',
     },
     chatInputRow: {
       display: 'flex',
@@ -223,6 +229,9 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       marginLeft: 4,
       marginRight: 4,
       flexDirection: 'row',
+      alignItems: 'flex-end',
+      position: 'relative',
+      zIndex: 2,
     },
     chatInput: {
       flex: 1,
@@ -234,6 +243,12 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       background: '#fff',
       boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
       minWidth: 0,
+      minHeight: 40,
+      maxHeight: 120,
+      resize: 'none',
+      overflow: 'auto',
+      transition: 'min-height 0.2s',
+      lineHeight: 1.5,
     },
     chatButton: {
       background: '#632569',
@@ -1167,14 +1182,29 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
               )}
             </div>
             <div style={styles.chatInputRow}>
-              <input
+              <textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={e => {
+                  setMessage(e.target.value);
+                  // Autoajustar altura
+                  const ta = e.target;
+                  ta.style.height = 'auto';
+                  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+                }}
                 placeholder="Escribe tu idea o pregunta..."
                 style={styles.chatInput}
                 disabled={isLoading}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' && !isLoading) sendMessage();
+                rows={1}
+                onInput={e => {
+                  const ta = e.target;
+                  ta.style.height = 'auto';
+                  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
                 }}
               />
               <button onClick={sendMessage} style={styles.chatButton} disabled={isLoading} title="Enviar">
