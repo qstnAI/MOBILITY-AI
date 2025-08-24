@@ -1150,41 +1150,56 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
               <div style={{ color: '#a084b6', fontSize: 15, marginTop: 2 }}>¡Cuéntame tu reto o pregunta y te ayudo a innovar!</div>
               <div style={{ width: '100%', height: 1, background: '#ece6f3', margin: '18px 0 10px 0', borderRadius: 2 }} />
             </div>
-            <div style={styles.chatContainer}>
-              {chat.map((msg, i) => (
-                <div
-                  key={i}
-                  style={msg.sender === "ai" ? styles.bubbleAI : styles.bubbleUser}
-                >
-                  {msg.sender === "ai"
-                    ? renderChatMessage(msg.text)
-                    : msg.text}
-                </div>
-              ))}
-              {isLoading && (
-                <div style={styles.bubbleAI}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <svg width="44" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'moveBus 1.2s linear infinite' }}>
-                      <rect x="2" y="7" width="36" height="10" rx="3" fill="#e53935" stroke="#b71c1c" strokeWidth="1.5"/>
-                      <rect x="6" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
-                      <rect x="14.5" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
-                      <rect x="23" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
-                      <rect x="32" y="10" width="4" height="6" rx="1.2" fill="#fff"/>
-                      <circle cx="10" cy="19.5" r="2.2" fill="#222" stroke="#b71c1c" strokeWidth="0.7"/>
-                      <circle cx="30" cy="19.5" r="2.2" fill="#222" stroke="#b71c1c" strokeWidth="0.7"/>
-                      <rect x="37.5" y="13" width="3" height="2.5" rx="0.8" fill="#b71c1c"/>
-                      <rect x="2" y="13" width="2.5" height="2.5" rx="0.8" fill="#b71c1c"/>
-                    </svg>
-                  </span>
-                  <style>{`
-                    @keyframes moveBus {
-                      0% { transform: translateX(0); }
-                      50% { transform: translateX(12px); }
-                      100% { transform: translateX(0); }
-                    }
-                  `}</style>
-                </div>
-              )}
+            <div style={{...styles.chatContainer, padding: 0}}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                maxHeight: '60vh',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-end',
+              }}>
+                {chat.map((msg, i) => (
+                  <div
+                    key={i}
+                    style={msg.sender === "ai" ? styles.bubbleAI : styles.bubbleUser}
+                  >
+                    {msg.sender === "ai"
+                      ? renderChatMessage(msg.text)
+                      : msg.text}
+                  </div>
+                ))}
+                {isLoading && (
+                  <div style={styles.bubbleAI}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <svg width="44" height="24" viewBox="0 0 44 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ animation: 'moveBus 1.2s linear infinite' }}>
+                        <rect x="2" y="7" width="36" height="10" rx="3" fill="#e53935" stroke="#b71c1c" strokeWidth="1.5"/>
+                        <rect x="6" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
+                        <rect x="14.5" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
+                        <rect x="23" y="10" width="7" height="4" rx="1.2" fill="#fff"/>
+                        <rect x="32" y="10" width="4" height="6" rx="1.2" fill="#fff"/>
+                        <circle cx="10" cy="19.5" r="2.2" fill="#222" stroke="#b71c1c" strokeWidth="0.7"/>
+                        <circle cx="30" cy="19.5" r="2.2" fill="#222" stroke="#b71c1c" strokeWidth="0.7"/>
+                        <rect x="37.5" y="13" width="3" height="2.5" rx="0.8" fill="#b71c1c"/>
+                        <rect x="2" y="13" width="2.5" height="2.5" rx="0.8" fill="#b71c1c"/>
+                      </svg>
+                    </span>
+                    <style>{`
+                      @keyframes moveBus {
+                        0% { transform: translateX(0); }
+                        50% { transform: translateX(12px); }
+                        100% { transform: translateX(0); }
+                      }
+                    `}</style>
+                  </div>
+                )}
+              </div>
             </div>
             <div style={styles.chatInputRow}>
               <input
