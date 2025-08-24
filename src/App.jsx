@@ -1163,8 +1163,7 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 style={{
                   width: '100%',
                   maxHeight: '60vh',
-                  minHeight: 0,
-                  overflowY: 'auto', // auto para móviles, scroll para escritorio
+                  overflowY: 'auto',
                   WebkitOverflowScrolling: 'touch',
                   padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
                   boxSizing: 'border-box',
@@ -1174,9 +1173,28 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                   alignItems: 'flex-start',
                   justifyContent: 'flex-end',
                   overscrollBehavior: 'contain',
-                  touchAction: 'pan-y',
+                  touchAction: 'manipulation',
+                  msOverflowStyle: 'auto',
+                  scrollbarWidth: 'thin',
                 }}
+                tabIndex={0}
               >
+                {/* Forzar scroll en móviles y barra visible en desktop */}
+                <style>{`
+                  .chat-scroll-fix {
+                    -webkit-overflow-scrolling: touch;
+                    overscroll-behavior: contain;
+                  }
+                  .chat-scroll-fix::-webkit-scrollbar {
+                    width: 8px;
+                    background: #ece6f3;
+                    border-radius: 8px;
+                  }
+                  .chat-scroll-fix::-webkit-scrollbar-thumb {
+                    background: #bdbdbd;
+                    border-radius: 8px;
+                  }
+                `}</style>
                 {chat.map((msg, i) => (
                   <div
                     key={i}
