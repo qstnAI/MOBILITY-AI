@@ -1164,7 +1164,6 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                   width: '100%',
                   maxHeight: '60vh',
                   overflowY: 'auto',
-                  WebkitOverflowScrolling: 'touch',
                   padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
                   boxSizing: 'border-box',
                   display: 'flex',
@@ -1172,18 +1171,22 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                   gap: '10px',
                   alignItems: 'flex-start',
                   justifyContent: 'flex-end',
-                  overscrollBehavior: 'contain',
-                  touchAction: 'manipulation',
-                  msOverflowStyle: 'auto',
-                  scrollbarWidth: 'thin',
                 }}
                 tabIndex={0}
               >
                 {/* Forzar scroll en móviles y barra visible en desktop */}
                 <style>{`
                   .chat-scroll-fix {
-                    -webkit-overflow-scrolling: touch;
+                    -webkit-overflow-scrolling: touch !important;
                     overscroll-behavior: contain;
+                    scroll-behavior: smooth;
+                    -webkit-tap-highlight-color: transparent;
+                    -webkit-user-select: none;
+                    user-select: none;
+                  }
+                  .chat-scroll-fix:active {
+                    -webkit-user-select: auto;
+                    user-select: auto;
                   }
                   .chat-scroll-fix::-webkit-scrollbar {
                     width: 8px;
