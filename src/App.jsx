@@ -1152,16 +1152,13 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
             <div style={{
               ...styles.chatContainer,
               padding: 0,
-              height: '60vh',
-              maxHeight: '60vh',
-              minHeight: 220,
-              position: 'relative',
+              overflow: 'visible',
             }}>
               <div
                 className="chat-scroll-fix"
                 style={{
                   width: '100%',
-                  maxHeight: '60vh',
+                  height: '60vh',
                   overflowY: 'auto',
                   padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
                   boxSizing: 'border-box',
@@ -1169,7 +1166,7 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                   flexDirection: 'column',
                   gap: '10px',
                   alignItems: 'flex-start',
-                  justifyContent: 'flex-end',
+                  // REMUEVE justify-content: flex-end
                 }}
                 tabIndex={0}
               >
@@ -1177,7 +1174,8 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 <style>{`
                   .chat-scroll-fix {
                     -webkit-overflow-scrolling: touch !important;
-                    overscroll-behavior: contain;
+                    overflow-y: auto !important;
+                    overscroll-behavior: auto !important;
                     scroll-behavior: smooth;
                     -webkit-tap-highlight-color: transparent;
                     -webkit-user-select: none;
