@@ -154,9 +154,13 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       gap: 'min(3vw, 12px)',
       marginBottom: '28px',
       padding: '0 4px',
-      flexWrap: 'wrap',
+      flexWrap: 'nowrap', // fuerza una sola línea
+      overflowX: 'auto', // permite scroll horizontal si no caben
       width: '100%',
       boxSizing: 'border-box',
+      WebkitOverflowScrolling: 'touch', // scroll suave en iOS
+      msOverflowStyle: 'none', // oculta barra en IE/Edge
+      scrollbarWidth: 'none', // oculta barra en Firefox
     },
     tabButton: (active) => ({
       padding: 'min(2vw, 10px) min(5vw, 22px)',
@@ -214,6 +218,8 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       minHeight: '220px',
       maxHeight: '60vh',
       overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch', // scroll suave en iOS
+      touchAction: 'pan-y', // mejora scroll vertical en móviles
       alignItems: 'flex-start',
       justifyContent: 'flex-end',
       background: '#fff',
@@ -223,6 +229,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       boxSizing: 'border-box',
       width: '100%',
       maxWidth: '100vw',
+      overscrollBehavior: 'contain', // previene scroll exterior en móviles
     },
     chatInputRow: {
       display: 'flex',
@@ -333,6 +340,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       marginRight: 8,
       width: '100%',
       boxSizing: 'border-box',
+      marginBottom: 'clamp(18px, 8vw, 38px)', // margen inferior responsivo para móviles
     },
   };
 
