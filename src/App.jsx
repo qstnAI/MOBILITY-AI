@@ -127,10 +127,13 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       fontFamily: "'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       padding: 0,
       margin: 0,
+      width: '100vw',
+      boxSizing: 'border-box',
+      overflowX: 'hidden',
     },
     header: {
       background: 'white',
-      padding: '16px 0 8px 0',
+      padding: 'min(4vw, 20px) 0 min(2vw, 10px) 0',
       textAlign: 'center',
       marginBottom: '12px',
       boxShadow: '0 2px 16px 0 rgba(99,37,105,0.06)',
@@ -138,7 +141,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     mainTitle: {
       color: '#632569',
       margin: 0,
-      fontSize: '22px',
+      fontSize: 'clamp(20px, 6vw, 32px)',
       fontWeight: '900',
       lineHeight: '1.1',
       letterSpacing: '0.5px',
@@ -148,25 +151,28 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     tabs: {
       display: 'flex',
       justifyContent: 'center',
-      gap: '12px',
+      gap: 'min(3vw, 12px)',
       marginBottom: '28px',
       padding: '0 4px',
       flexWrap: 'wrap',
+      width: '100%',
+      boxSizing: 'border-box',
     },
     tabButton: (active) => ({
-      padding: '10px 22px',
+      padding: 'min(2vw, 10px) min(5vw, 22px)',
       border: 'none',
       background: active ? 'linear-gradient(90deg, #632569 60%, #a084b6 100%)' : '#f3e9f8',
       color: active ? 'white' : '#632569',
       borderRadius: '12px',
       cursor: 'pointer',
       fontWeight: 700,
-      fontSize: '15px',
+      fontSize: 'clamp(13px, 3vw, 16px)',
       letterSpacing: '0.2px',
       transition: 'all 0.18s',
       outline: 'none',
       boxShadow: active ? '0 2px 8px 0 rgba(99,37,105,0.10)' : 'none',
       borderBottom: active ? '2.5px solid #a084b6' : '2.5px solid transparent',
+      minWidth: 90,
     }),
     bubbleAI: {
       alignSelf: 'flex-start',
@@ -174,10 +180,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       color: 'white',
       borderRadius: '14px',
       padding: '10px 18px',
-      maxWidth: '95vw',
+      maxWidth: '98vw',
       boxSizing: 'border-box',
       boxShadow: '0 4px 18px 0 rgba(99,37,105,0.13)',
-      fontSize: '15px',
+      fontSize: 'clamp(13px, 3vw, 16px)',
       marginBottom: 10,
       fontWeight: 400,
       position: 'relative',
@@ -190,10 +196,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       color: 'white',
       borderRadius: '14px',
       padding: '10px 18px',
-      maxWidth: '95vw',
+      maxWidth: '98vw',
       boxSizing: 'border-box',
       boxShadow: '0 4px 18px 0 rgba(99,37,105,0.10)',
-      fontSize: '15px',
+      fontSize: 'clamp(13px, 3vw, 16px)',
       marginBottom: 10,
       fontWeight: 400,
       position: 'relative',
@@ -204,10 +210,9 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
-      padding: '32px 8vw 22px 8vw',
-      minHeight: '320px',
+      padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
+      minHeight: '220px',
       maxHeight: '60vh',
-      height: '60vh',
       overflowY: 'auto',
       alignItems: 'flex-start',
       justifyContent: 'flex-end',
@@ -216,11 +221,8 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       borderRadius: '16px',
       boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
       boxSizing: 'border-box',
-      WebkitOverflowScrolling: 'touch',
-      overscrollBehavior: 'contain',
-      touchAction: 'manipulation',
-      position: 'relative',
-      transition: 'height 0.2s',
+      width: '100%',
+      maxWidth: '100vw',
     },
     chatInputRow: {
       display: 'flex',
@@ -229,26 +231,22 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       marginLeft: 4,
       marginRight: 4,
       flexDirection: 'row',
-      alignItems: 'flex-end',
-      position: 'relative',
-      zIndex: 2,
+      flexWrap: 'wrap',
+      width: '100%',
+      boxSizing: 'border-box',
     },
     chatInput: {
       flex: 1,
       padding: '12px 16px',
       borderRadius: '20px',
       border: '1.5px solid #e0e0e0',
-      fontSize: '15px',
+      fontSize: 'clamp(13px, 3vw, 16px)',
       outline: 'none',
       background: '#fff',
       boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
       minWidth: 0,
-      minHeight: 40,
-      maxHeight: 120,
-      resize: 'none',
-      overflow: 'auto',
-      transition: 'min-height 0.2s',
-      lineHeight: 1.5,
+      width: '100%',
+      maxWidth: '100vw',
     },
     chatButton: {
       background: '#632569',
@@ -270,11 +268,11 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     },
     input: {
       width: '100%',
-      padding: '14px 16px',
+      padding: 'min(4vw, 14px) min(4vw, 16px)',
       border: '1.5px solid #e0e0e0',
       borderRadius: '10px',
       marginBottom: '14px',
-      fontSize: '15px',
+      fontSize: 'clamp(13px, 3vw, 16px)',
       outline: 'none',
       fontFamily: 'inherit',
       background: '#faf9fb',
@@ -284,11 +282,11 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     },
     textarea: {
       width: '100%',
-      padding: '14px 16px',
+      padding: 'min(4vw, 14px) min(4vw, 16px)',
       border: '1.5px solid #e0e0e0',
       borderRadius: '10px',
       marginBottom: '14px',
-      fontSize: '15px',
+      fontSize: 'clamp(13px, 3vw, 16px)',
       minHeight: '80px',
       resize: 'vertical',
       outline: 'none',
@@ -302,10 +300,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       background: 'linear-gradient(90deg, #632569 60%, #a084b6 100%)',
       color: 'white',
       border: 'none',
-      padding: '12px 28px',
+      padding: 'min(3vw, 12px) min(7vw, 28px)',
       borderRadius: '10px',
       cursor: 'pointer',
-      fontSize: '15px',
+      fontSize: 'clamp(13px, 3vw, 16px)',
       fontWeight: 'bold',
       margin: '8px',
       transition: 'all 0.18s',
@@ -315,11 +313,13 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     resultCard: {
       background: '#f8f9fa',
       borderRadius: '16px',
-      padding: '22px 4vw',
+      padding: 'min(6vw, 22px) 4vw',
       marginTop: '18px',
       border: 'none',
       boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
       boxSizing: 'border-box',
+      width: '100%',
+      maxWidth: '100vw',
     },
     card: {
       background: 'none',
@@ -327,7 +327,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       border: 'none',
       padding: 0,
       margin: '0 auto',
-      maxWidth: 650,
+      maxWidth: '98vw',
       marginTop: 8,
       marginLeft: 8,
       marginRight: 8,
@@ -649,22 +649,19 @@ Usa viñetas simples para listas.`;
     setMessage("");
     try {
       const promptWithContext = `${companyContext}\n\nUsuario: ${message}`;
-      
-      // CAMBIA ESTO: usa /api/dmama en lugar de /api/chat
-      const response = await fetch('https://mejora-continua-ia.onrender.com/api/dmama', {
+      // Usar la ruta correcta para el chat general
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // CAMBIA EL BODY: usa "prompt" en lugar de "messages"
         body: JSON.stringify({
-          prompt: promptWithContext  // ← ESTE ES EL CAMBIO CLAVE
+          messages: [
+            { role: "user", content: promptWithContext }
+          ]
         }),
       });
-      
       if (!response.ok) throw new Error('Error de conexión');
       const data = await response.json();
-      
       setChat(prev => [...prev, { sender: "ai", text: data.response }]);
-      
     } catch (error) {
       setChat(prev => [...prev, { 
         sender: "ai", 
@@ -1182,29 +1179,14 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
               )}
             </div>
             <div style={styles.chatInputRow}>
-              <textarea
+              <input
                 value={message}
-                onChange={e => {
-                  setMessage(e.target.value);
-                  // Autoajustar altura
-                  const ta = e.target;
-                  ta.style.height = 'auto';
-                  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
-                }}
+                onChange={(e) => setMessage(e.target.value)}
                 placeholder="Escribe tu idea o pregunta..."
                 style={styles.chatInput}
                 disabled={isLoading}
-                rows={1}
-                onInput={e => {
-                  const ta = e.target;
-                  ta.style.height = 'auto';
-                  ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
-                }}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
-                    e.preventDefault();
-                    sendMessage();
-                  }
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && !isLoading) sendMessage();
                 }}
               />
               <button onClick={sendMessage} style={styles.chatButton} disabled={isLoading} title="Enviar">
