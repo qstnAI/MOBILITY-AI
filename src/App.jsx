@@ -1162,10 +1162,9 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 className="chat-scroll-fix"
                 style={{
                   width: '100%',
-                  height: '100%',
-                  maxHeight: '100%',
+                  maxHeight: '60vh',
                   minHeight: 0,
-                  overflowY: 'scroll',
+                  overflowY: 'auto', // auto para móviles, scroll para escritorio
                   WebkitOverflowScrolling: 'touch',
                   padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
                   boxSizing: 'border-box',
