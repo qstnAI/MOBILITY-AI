@@ -1150,21 +1150,34 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
               <div style={{ color: '#a084b6', fontSize: 15, marginTop: 2 }}>¡Cuéntame tu reto o pregunta y te ayudo a innovar!</div>
               <div style={{ width: '100%', height: 1, background: '#ece6f3', margin: '18px 0 10px 0', borderRadius: 2 }} />
             </div>
-            <div style={{...styles.chatContainer, padding: 0}}>
-              <div style={{
-                width: '100%',
-                height: '100%',
-                maxHeight: '60vh',
-                overflowY: 'auto',
-                WebkitOverflowScrolling: 'touch',
-                padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
-                boxSizing: 'border-box',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-                alignItems: 'flex-start',
-                justifyContent: 'flex-end',
-              }}>
+            <div style={{
+              ...styles.chatContainer,
+              padding: 0,
+              height: '60vh',
+              maxHeight: '60vh',
+              minHeight: 220,
+              position: 'relative',
+            }}>
+              <div
+                className="chat-scroll-fix"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  maxHeight: '100%',
+                  minHeight: 0,
+                  overflowY: 'scroll',
+                  WebkitOverflowScrolling: 'touch',
+                  padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
+                  boxSizing: 'border-box',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-end',
+                  overscrollBehavior: 'contain',
+                  touchAction: 'pan-y',
+                }}
+              >
                 {chat.map((msg, i) => (
                   <div
                     key={i}
@@ -1200,6 +1213,17 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                   </div>
                 )}
               </div>
+              <style>{`
+                .chat-scroll-fix::-webkit-scrollbar {
+                  width: 8px;
+                  background: #ece6f3;
+                  border-radius: 8px;
+                }
+                .chat-scroll-fix::-webkit-scrollbar-thumb {
+                  background: #bdbdbd;
+                  border-radius: 8px;
+                }
+              `}</style>
             </div>
             <div style={styles.chatInputRow}>
               <input
