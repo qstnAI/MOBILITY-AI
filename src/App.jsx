@@ -1242,7 +1242,7 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 }
               `}</style>
             </div>
-            <div style={styles.chatInputRow}>
+            <div style={{ ...styles.chatInputRow, marginTop: 18 }}>
               <input
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
