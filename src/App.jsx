@@ -132,7 +132,6 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       overflowX: 'hidden',
     },
     header: {
-      background: 'white',
       padding: 'min(4vw, 20px) 0 min(2vw, 10px) 0',
       textAlign: 'center',
       marginBottom: '12px',
@@ -145,7 +144,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       fontWeight: '900',
       lineHeight: '1.1',
       letterSpacing: '0.5px',
-      fontFamily: "'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      // REMUEVE justify-content: flex-end
       textShadow: '0 1px 0 #f3e9f8',
     },
     tabs: {
@@ -216,7 +215,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       gap: '10px',
       padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
       minHeight: '220px',
-      maxHeight: '60vh',
+  height: '60vh',
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch', // scroll suave en iOS
       touchAction: 'pan-y', // mejora scroll vertical en móviles
@@ -234,7 +233,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     chatInputRow: {
       display: 'flex',
       gap: 8,
-      marginTop: 18,
+  marginTop: 0,
       marginLeft: 4,
       marginRight: 4,
       flexDirection: 'row',
@@ -246,7 +245,7 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       flex: 1,
       padding: '12px 16px',
       borderRadius: '20px',
-      border: '1.5px solid #e0e0e0',
+  border: '1.5px solid #b2ebf2',
       fontSize: 'clamp(13px, 3vw, 16px)',
       outline: 'none',
       background: '#fff',
