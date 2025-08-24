@@ -1150,11 +1150,20 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
               <div style={{ color: '#a084b6', fontSize: 15, marginTop: 2 }}>¡Cuéntame tu reto o pregunta y te ayudo a innovar!</div>
               <div style={{ width: '100%', height: 1, background: '#ece6f3', margin: '18px 0 10px 0', borderRadius: 2 }} />
             </div>
-            <div style={{...styles.chatContainer, padding: 0}}>
+            <div style={{
+              ...styles.chatContainer,
+              padding: 0,
+              overflowY: 'visible', // Eliminar scroll del contenedor exterior
+              height: '60vh',
+              minHeight: 220,
+              maxHeight: '60vh',
+              position: 'relative',
+            }}>
               <div style={{
                 width: '100%',
                 height: '100%',
-                maxHeight: '60vh',
+                maxHeight: '100%',
+                minHeight: 0,
                 overflowY: 'auto',
                 WebkitOverflowScrolling: 'touch',
                 padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
@@ -1164,6 +1173,8 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 gap: '10px',
                 alignItems: 'flex-start',
                 justifyContent: 'flex-end',
+                overscrollBehavior: 'contain',
+                touchAction: 'pan-y',
               }}>
                 {chat.map((msg, i) => (
                   <div
