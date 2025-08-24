@@ -1184,21 +1184,30 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
             <div style={styles.chatInputRow}>
               <textarea
                 value={message}
+                ref={el => {
+                  if (el && message === "") el.style.height = "40px";
+                }}
                 onChange={e => {
                   setMessage(e.target.value);
-                  // Autoajustar altura
                   const ta = e.target;
-                  ta.style.height = 'auto';
+                  ta.style.height = '40px';
                   ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
                 }}
                 placeholder="Escribe tu idea o pregunta..."
-                style={styles.chatInput}
+                style={{...styles.chatInput, overflowY:'auto'}}
                 disabled={isLoading}
                 rows={1}
                 onInput={e => {
                   const ta = e.target;
-                  ta.style.height = 'auto';
+                  ta.style.height = '40px';
                   ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+                }}
+                onFocus={e => {
+                  // Al enfocar, hacer scroll al final del chat
+                  setTimeout(() => {
+                    const chatDiv = document.querySelector('[style*="overflow-y: auto"]');
+                    if (chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
+                  }, 200);
                 }}
                 onKeyDown={e => {
                   if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
