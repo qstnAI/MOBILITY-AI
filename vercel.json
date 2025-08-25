@@ -1,0 +1,16 @@
+{
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "framework": "vite",
+  "ignoreCommand": "echo Using root vercel.json",
+  "routes": [
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
