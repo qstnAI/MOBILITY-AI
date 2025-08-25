@@ -742,10 +742,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
         if (currentList.length > 0) {
           blocks.push(
             <div key={`list-${index}`} style={{
-              margin: '16px 0 20px 0',
-              padding: '16px 20px',
+              margin: 'clamp(12px, 3vw, 16px) 0 clamp(16px, 4vw, 20px) 0',
+              padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
               background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
-              borderRadius: '12px',
+              borderRadius: 'clamp(10px, 2.5vw, 12px)',
               border: '1px solid rgba(102, 126, 234, 0.1)',
               backdropFilter: 'blur(10px)'
             }}>
@@ -761,19 +761,19 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
           <div key={`title-${index}`} style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            margin: '24px 0 12px 0',
-            padding: '16px 20px',
+            gap: 'clamp(8px, 2vw, 12px)',
+            margin: 'clamp(16px, 4vw, 24px) 0 clamp(8px, 2vw, 12px) 0',
+            padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '16px',
+            borderRadius: 'clamp(12px, 3vw, 16px)',
             boxShadow: '0 4px 20px rgba(102, 126, 234, 0.2)',
             color: 'white',
             fontWeight: 700,
-            fontSize: '18px',
+            fontSize: 'clamp(16px, 4vw, 18px)',
             letterSpacing: '0.5px',
             textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
           }}>
-            <span style={{ fontSize: '24px' }}>{icon}</span>
+            <span style={{ fontSize: 'clamp(20px, 5vw, 24px)' }}>{icon}</span>
             <span style={{ fontWeight: 'bold' }}>{cleanLine.toUpperCase()}</span>
           </div>
         );
@@ -784,11 +784,11 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
           <div key={`item-${currentList.length}`} style={{
             display: 'flex',
             alignItems: 'flex-start',
-            gap: '12px',
-            marginBottom: '12px',
-            padding: '12px 16px',
+            gap: 'clamp(8px, 2vw, 12px)',
+            marginBottom: 'clamp(8px, 2vw, 12px)',
+            padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
             background: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: '10px',
+            borderRadius: 'clamp(8px, 2vw, 10px)',
             border: '1px solid rgba(102, 126, 234, 0.1)',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
             transition: 'all 0.2s ease',
@@ -803,14 +803,14 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
             e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)';
           }}>
             <span style={{
-              fontSize: '16px',
+              fontSize: 'clamp(14px, 3.5vw, 16px)',
               color: '#667eea',
               fontWeight: 'bold',
               marginTop: '2px'
             }}>•</span>
             <span style={{
-              fontSize: '15px',
-              lineHeight: '1.6',
+              fontSize: 'clamp(13px, 3.5vw, 15px)',
+              lineHeight: '1.5',
               color: '#2d3748',
               fontWeight: 500
             }}>{cleanItem}</span>
@@ -837,13 +837,13 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
         // Texto normal con diseño mejorado
         blocks.push(
           <div key={`text-${index}`} style={{
-            marginBottom: '12px',
-            padding: '12px 16px',
+            marginBottom: 'clamp(8px, 2vw, 12px)',
+            padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
             background: 'rgba(255, 255, 255, 0.9)',
-            borderRadius: '10px',
+            borderRadius: 'clamp(8px, 2vw, 10px)',
             border: '1px solid rgba(0, 0, 0, 0.05)',
-            fontSize: '15px',
-            lineHeight: '1.6',
+            fontSize: 'clamp(13px, 3.5vw, 15px)',
+            lineHeight: '1.5',
             color: '#4a5568',
             fontWeight: 400
           }}>
@@ -857,10 +857,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
     if (currentList.length > 0) {
       blocks.push(
         <div key="list-final" style={{
-          margin: '16px 0 20px 0',
-          padding: '16px 20px',
+          margin: 'clamp(12px, 3vw, 16px) 0 clamp(16px, 4vw, 20px) 0',
+          padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
           background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
-          borderRadius: '12px',
+          borderRadius: 'clamp(10px, 2.5vw, 12px)',
           border: '1px solid rgba(102, 126, 234, 0.1)',
           backdropFilter: 'blur(10px)'
         }}>
@@ -989,10 +989,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
         if (currentList.length > 0) {
           blocks.push(
             <div key={`list-${idx}`} style={{
-              margin: '16px 0 20px 0',
-              padding: '16px 20px',
+              margin: 'clamp(12px, 3vw, 16px) 0 clamp(16px, 4vw, 20px) 0',
+              padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
               background: 'linear-gradient(135deg, rgba(0, 131, 143, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%)',
-              borderRadius: '12px',
+              borderRadius: 'clamp(10px, 2.5vw, 12px)',
               border: '1px solid rgba(0, 131, 143, 0.1)',
               backdropFilter: 'blur(10px)'
             }}>
@@ -1005,14 +1005,14 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
         // Renderizar título inspirador
         blocks.push(
           <div key={`title-${idx}`} style={{
-            margin: '24px 0 12px 0',
-            padding: '16px 20px',
+            margin: 'clamp(16px, 4vw, 24px) 0 clamp(8px, 2vw, 12px) 0',
+            padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
             background: 'linear-gradient(135deg, #00838f 0%, #00bcd4 100%)',
-            borderRadius: '16px',
+            borderRadius: 'clamp(12px, 3vw, 16px)',
             boxShadow: '0 4px 20px rgba(0, 131, 143, 0.2)',
             color: 'white',
             fontWeight: 700,
-            fontSize: '18px',
+            fontSize: 'clamp(16px, 4vw, 18px)',
             letterSpacing: '0.5px',
             textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
           }}>
@@ -1027,11 +1027,11 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
           <div key={`item-${currentList.length}`} style={{
             display: 'flex',
             alignItems: 'flex-start',
-            gap: '12px',
-            marginBottom: '12px',
-            padding: '12px 16px',
+            gap: 'clamp(8px, 2vw, 12px)',
+            marginBottom: 'clamp(8px, 2vw, 12px)',
+            padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
             background: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: '10px',
+            borderRadius: 'clamp(8px, 2vw, 10px)',
             border: '1px solid rgba(0, 131, 143, 0.1)',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
             transition: 'all 0.2s ease',
@@ -1046,14 +1046,14 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
             e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)';
           }}>
             <span style={{
-              fontSize: '16px',
+              fontSize: 'clamp(14px, 3.5vw, 16px)',
               color: '#00838f',
               fontWeight: 'bold',
               marginTop: '2px'
             }}>•</span>
             <span style={{
-              fontSize: '15px',
-              lineHeight: '1.6',
+              fontSize: 'clamp(13px, 3.5vw, 15px)',
+              lineHeight: '1.5',
               color: '#2d3748',
               fontWeight: 500
             }}>{parseMarkdown(bulletContent)}</span>
@@ -1065,10 +1065,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
         if (currentList.length > 0) {
           blocks.push(
             <div key={`list-${idx}`} style={{
-              margin: '16px 0 20px 0',
-              padding: '16px 20px',
+              margin: 'clamp(12px, 3vw, 16px) 0 clamp(16px, 4vw, 20px) 0',
+              padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
               background: 'linear-gradient(135deg, rgba(0, 131, 143, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%)',
-              borderRadius: '12px',
+              borderRadius: 'clamp(10px, 2.5vw, 12px)',
               border: '1px solid rgba(0, 131, 143, 0.1)',
               backdropFilter: 'blur(10px)'
             }}>
@@ -1081,13 +1081,13 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
         // Texto normal con diseño mejorado
         blocks.push(
           <div key={`text-${idx}`} style={{
-            marginBottom: '12px',
-            padding: '12px 16px',
+            marginBottom: 'clamp(8px, 2vw, 12px)',
+            padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
             background: 'rgba(255, 255, 255, 0.9)',
-            borderRadius: '10px',
+            borderRadius: 'clamp(8px, 2vw, 10px)',
             border: '1px solid rgba(0, 0, 0, 0.05)',
-            fontSize: '15px',
-            lineHeight: '1.6',
+            fontSize: 'clamp(13px, 3.5vw, 15px)',
+            lineHeight: '1.5',
             color: '#4a5568',
             fontWeight: 400
           }}>
@@ -1101,10 +1101,10 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
     if (currentList.length > 0) {
       blocks.push(
         <div key="list-final" style={{
-          margin: '16px 0 20px 0',
-          padding: '16px 20px',
+          margin: 'clamp(12px, 3vw, 16px) 0 clamp(16px, 4vw, 20px) 0',
+          padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
           background: 'linear-gradient(135deg, rgba(0, 131, 143, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%)',
-          borderRadius: '12px',
+          borderRadius: 'clamp(10px, 2.5vw, 12px)',
           border: '1px solid rgba(0, 131, 143, 0.1)',
           backdropFilter: 'blur(10px)'
         }}>
