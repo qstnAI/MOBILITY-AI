@@ -25,3 +25,6 @@ dist-ssr
 
 # Ignore nested git dirs (flattened repo)
 **/.git
+
+# Google credentials
+backend/mobility-ia-2ecb9f2273a0.json
