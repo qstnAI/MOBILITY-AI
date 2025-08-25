@@ -1249,6 +1249,23 @@ Responde estrictamente con el formato solicitado.
       if (!response.ok) throw new Error('Error de conexión');
       const data = await response.json();
       setDocumentationResult(data.response);
+      
+      // Guardar datos automáticamente
+      try {
+        await fetch('https://mejora-continua-ia.onrender.com/api/save-data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'potenciador',
+            data: {
+              ...formData,
+              result: data.response
+            }
+          }),
+        });
+      } catch (saveError) {
+        console.log("Error al guardar datos:", saveError);
+      }
     } catch (error) {
       setDocumentationResult("❌ Error al generar sugerencias. Por favor, intenta nuevamente.");
     } finally {
@@ -1700,6 +1717,23 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
               });
               const data = await res.json();
               setDmamaResult(data.response || 'No se pudo generar la guía.');
+              
+              // Guardar datos automáticamente
+              try {
+                await fetch('https://mejora-continua-ia.onrender.com/api/save-data', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    type: 'docuia',
+                    data: {
+                      ...dmamaForm,
+                      result: data.response || 'No se pudo generar la guía.'
+                    }
+                  }),
+                });
+              } catch (saveError) {
+                console.log("Error al guardar datos:", saveError);
+              }
             } catch (error) {
               setDmamaResult('❌ Error al generar la guía. Por favor, intenta nuevamente.');
             } finally {
