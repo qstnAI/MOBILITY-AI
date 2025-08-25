@@ -901,7 +901,13 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
       return parts.length > 0 ? parts : text;
     };
 
-    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(line => {
+      // Filtrar líneas vacías, solo guiones, o líneas que solo contienen caracteres especiales
+      return line && 
+             !/^[-_*]+$/.test(line) && 
+             !/^[^\w\s]+$/.test(line) &&
+             line.length > 0;
+    });
     const blocks = [];
     let currentList = [];
 
@@ -940,6 +946,9 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
 
     lines.forEach((line, idx) => {
       if (!line.trim()) return;
+      
+      // Ignorar líneas que solo contienen guiones o caracteres especiales
+      if (/^[-_*]+$/.test(line.trim()) || /^[^\w\s]+$/.test(line.trim())) return;
 
       // Limpiar la línea: quitar ## y espacios extra
       let cleanLine = line
