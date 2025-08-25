@@ -1715,14 +1715,22 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 style={{ flex: 1, minWidth: 120, padding: '10px 14px', borderRadius: 10, border: '1.5px solid #b2ebf2', fontSize: 15, fontFamily: 'Inter, sans-serif' }}
                 required
               />
-              <input
-                type="text"
-                placeholder="Área"
+              <select
                 value={dmamaForm.area}
                 onChange={e => setDmamaForm(f => ({ ...f, area: e.target.value }))}
-                style={{ flex: 1, minWidth: 120, padding: '10px 14px', borderRadius: 10, border: '1.5px solid #b2ebf2', fontSize: 15, fontFamily: 'Inter, sans-serif' }}
+                style={{ flex: 1, minWidth: 120, padding: '10px 14px', borderRadius: 10, border: '1.5px solid #b2ebf2', fontSize: 15, fontFamily: 'Inter, sans-serif', background: '#ffffff', cursor: 'pointer' }}
                 required
-              />
+              >
+                <option value="">Selecciona un área</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="Operaciones">Operaciones</option>
+                <option value="Comercial">Comercial</option>
+                <option value="Recursos Humanos">Recursos Humanos</option>
+                <option value="Contraloría">Contraloría</option>
+                <option value="Turismo">Turismo</option>
+                <option value="TEPER">TEPER</option>
+                <option value="EMCO">EMCO</option>
+              </select>
             </div>
             <textarea
               placeholder="Describe brevemente la mejora que quieres documentar..."
@@ -2039,14 +2047,28 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 style={styles.input}
                 disabled={isLoading}
               />
-              <input
+              <select
                 name="area"
                 value={formData.area}
                 onChange={handleInputChange}
-                placeholder="Área o departamento"
-                style={styles.input}
+                style={{
+                  ...styles.input,
+                  background: '#ffffff',
+                  cursor: 'pointer',
+                  padding: 'clamp(12px, 3vw, 14px) clamp(14px, 3.5vw, 16px)',
+                }}
                 disabled={isLoading}
-              />
+              >
+                <option value="">Selecciona un área</option>
+                <option value="Mantenimiento">Mantenimiento</option>
+                <option value="Operaciones">Operaciones</option>
+                <option value="Comercial">Comercial</option>
+                <option value="Recursos Humanos">Recursos Humanos</option>
+                <option value="Contraloría">Contraloría</option>
+                <option value="Turismo">Turismo</option>
+                <option value="TEPER">TEPER</option>
+                <option value="EMCO">EMCO</option>
+              </select>
               <textarea
                 name="problem"
                 value={formData.problem}
