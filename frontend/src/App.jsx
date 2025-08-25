@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 // Función específica para renderizar resultados de DocuIA (DMAMA)
 function renderDmamaResult(text) {
   if (!text) return null;
@@ -82,7 +84,6 @@ function renderDmamaResult(text) {
 
   return blocks;
 }
-import { useState, useEffect } from "react";
 
 export default function App() {
   // Estados principales
