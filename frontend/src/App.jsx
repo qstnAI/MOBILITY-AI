@@ -1,4 +1,134 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// Componente de estrellas animadas para el fondo del espacio exterior
+function StarField() {
+  const [stars, setStars] = useState([]);
+  const [brightStars, setBrightStars] = useState([]);
+
+  useEffect(() => {
+    // Generar estrellas aleatorias
+    const generateStars = () => {
+      const newStars = [];
+      for (let i = 0; i < 150; i++) {
+        newStars.push({
+          id: i,
+          x: Math.random() * 100,
+          y: Math.random() * 100,
+          size: Math.random() * 3 + 1,
+          opacity: Math.random() * 0.8 + 0.2,
+          animationDelay: Math.random() * 3,
+          twinkleSpeed: Math.random() * 2 + 1
+        });
+      }
+      setStars(newStars);
+
+      // Generar estrellas brillantes especiales
+      const newBrightStars = [];
+      for (let i = 0; i < 8; i++) {
+        newBrightStars.push({
+          id: `bright-${i}`,
+          x: Math.random() * 100,
+          y: Math.random() * 100,
+          size: Math.random() * 4 + 3,
+          opacity: Math.random() * 0.6 + 0.4,
+          animationDelay: Math.random() * 4,
+          twinkleSpeed: Math.random() * 3 + 2,
+          color: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'][i % 8]
+        });
+      }
+      setBrightStars(newBrightStars);
+    };
+
+    generateStars();
+  }, []);
+
+  return (
+    <div style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      overflow: 'hidden',
+      zIndex: 0
+    }}>
+      {/* Efecto de nebulosa sutil */}
+      <div style={{
+        position: 'absolute',
+        top: '20%',
+        left: '10%',
+        width: '200px',
+        height: '150px',
+        background: 'radial-gradient(ellipse at center, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 40%, transparent 70%)',
+        borderRadius: '50%',
+        animation: 'float 8s ease-in-out infinite',
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: '60%',
+        right: '15%',
+        width: '150px',
+        height: '120px',
+        background: 'radial-gradient(ellipse at center, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 40%, transparent 70%)',
+        borderRadius: '50%',
+        animation: 'float 6s ease-in-out infinite 2s',
+      }} />
+      
+      {/* Estrellas normales */}
+      {stars.map(star => (
+        <div
+          key={star.id}
+          style={{
+            position: 'absolute',
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            backgroundColor: '#ffffff',
+            borderRadius: '50%',
+            opacity: star.opacity,
+            animation: `twinkle ${star.twinkleSpeed}s ease-in-out infinite ${star.animationDelay}s`,
+            boxShadow: `0 0 ${star.size * 2}px rgba(255, 255, 255, 0.8)`
+          }}
+        />
+      ))}
+      
+      {/* Estrellas brillantes especiales */}
+      {brightStars.map(star => (
+        <div
+          key={star.id}
+          style={{
+            position: 'absolute',
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            backgroundColor: star.color,
+            borderRadius: '50%',
+            opacity: star.opacity,
+            animation: `brightTwinkle ${star.twinkleSpeed}s ease-in-out infinite ${star.animationDelay}s`,
+            boxShadow: `0 0 ${star.size * 3}px ${star.color}, 0 0 ${star.size * 6}px rgba(255, 255, 255, 0.3)`
+          }}
+        />
+      ))}
+      
+      <style>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        @keyframes brightTwinkle {
+          0%, 100% { opacity: 0.4; transform: scale(1) rotate(0deg); }
+          50% { opacity: 1; transform: scale(1.3) rotate(180deg); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) scale(1); opacity: 0.1; }
+          50% { transform: translateY(-20px) scale(1.1); opacity: 0.15; }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 // Función específica para renderizar resultados de DocuIA (DMAMA)
 function renderDmamaResult(text) {
@@ -105,7 +235,13 @@ Puedo ayudarte a:
 • Guiarte para estructurar y potenciar propuestas de mejora.
 • Sugerir KPIs, pasos iniciales y detectar riesgos.
 
-Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
+Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
+      suggestions: [
+        "¿Cómo puedo mejorar la experiencia del cliente?",
+        "Necesito ideas para optimizar procesos",
+        "Ayúdame a estructurar un proyecto de mejora",
+        "¿Qué KPIs debería medir para mi área?"
+      ]
     },
   ]);
   const [message, setMessage] = useState("");
@@ -120,91 +256,96 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
   });
   const [documentationResult, setDocumentationResult] = useState("");
 
-  // Estilos (puedes personalizar)
+  // Estilos profesionales modernos
   const styles = {
     container: {
       minHeight: '100vh',
-      background: '#f8f9fa',
-      fontFamily: "'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      background: '#ffffff',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       padding: 0,
       margin: 0,
       width: '100vw',
       boxSizing: 'border-box',
       overflowX: 'hidden',
+      maxWidth: '100%',
     },
     header: {
-      padding: 'min(4vw, 20px) 0 min(2vw, 10px) 0',
+      padding: 'clamp(20px, 6vw, 32px) 0 clamp(12px, 4vw, 16px) 0',
       textAlign: 'center',
       marginBottom: '12px',
-      boxShadow: '0 2px 16px 0 rgba(99,37,105,0.06)',
+      background: 'linear-gradient(180deg, #0a0a23 0%, #0f0f2a 15%, #1a1a3a 30%, #252545 45%, #303050 60%, #404060 75%, #606080 90%, rgba(255, 255, 255, 0.99) 100%)',
+      borderBottom: '1px solid #e2e8f0',
+      position: 'relative',
+      overflow: 'hidden',
+      minHeight: 'clamp(150px, 25vh, 200px)',
     },
     mainTitle: {
-      color: '#632569',
+      color: '#1a202c',
       margin: 0,
-      fontSize: 'clamp(20px, 6vw, 32px)',
-      fontWeight: '900',
-      lineHeight: '1.1',
-      letterSpacing: '0.5px',
-      // REMUEVE justify-content: flex-end
-      textShadow: '0 1px 0 #f3e9f8',
+      fontSize: 'clamp(24px, 6vw, 40px)',
+      fontWeight: '600',
+      lineHeight: '1.2',
+      letterSpacing: '-0.02em',
     },
     tabs: {
       display: 'flex',
       justifyContent: 'center',
-      gap: 'min(3vw, 12px)',
-      marginBottom: '28px',
-      padding: '0 4px',
-      flexWrap: 'nowrap', // fuerza una sola línea
-      overflowX: 'auto', // permite scroll horizontal si no caben
+      gap: 'clamp(4px, 2vw, 8px)',
+      marginTop: '-8px',
+      marginBottom: 'clamp(20px, 6vw, 32px)',
+      padding: '0 clamp(12px, 4vw, 16px)',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
       width: '100%',
       boxSizing: 'border-box',
-      WebkitOverflowScrolling: 'touch', // scroll suave en iOS
-      msOverflowStyle: 'none', // oculta barra en IE/Edge
-      scrollbarWidth: 'none', // oculta barra en Firefox
+      WebkitOverflowScrolling: 'touch',
+      msOverflowStyle: 'none',
+      scrollbarWidth: 'none',
     },
     tabButton: (active) => ({
-      padding: 'min(2vw, 10px) min(5vw, 22px)',
+      padding: 'clamp(10px, 3vw, 12px) clamp(16px, 4vw, 20px)',
       border: 'none',
-      background: active ? 'linear-gradient(90deg, #632569 60%, #a084b6 100%)' : '#f3e9f8',
-      color: active ? 'white' : '#632569',
-      borderRadius: '12px',
+      background: active ? 'linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%)' : '#f8fafc',
+      color: active ? 'white' : '#4a5568',
+      borderRadius: '8px',
       cursor: 'pointer',
-      fontWeight: 700,
-      fontSize: 'clamp(13px, 3vw, 16px)',
-      letterSpacing: '0.2px',
-      transition: 'all 0.18s',
+      fontWeight: 500,
+      fontSize: 'clamp(13px, 3.5vw, 14px)',
+      transition: 'all 0.2s ease',
       outline: 'none',
-      boxShadow: active ? '0 2px 8px 0 rgba(99,37,105,0.10)' : 'none',
-      borderBottom: active ? '2.5px solid #a084b6' : '2.5px solid transparent',
-      minWidth: 90,
+      boxShadow: active ? '0 4px 12px rgba(139, 92, 246, 0.3)' : 'none',
+      border: active ? 'none' : '1px solid #e2e8f0',
+      minWidth: 'clamp(80px, 20vw, 100px)',
+      touchAction: 'manipulation',
     }),
     bubbleAI: {
       alignSelf: 'flex-start',
-      background: '#632569',
+      background: 'linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%)',
       color: 'white',
-      borderRadius: '14px',
-      padding: '10px 18px',
-      maxWidth: '98vw',
+      borderRadius: '12px',
+      padding: '14px 18px',
+      maxWidth: '85%',
       boxSizing: 'border-box',
-      boxShadow: '0 4px 18px 0 rgba(99,37,105,0.13)',
-      fontSize: 'clamp(13px, 3vw, 16px)',
-      marginBottom: 10,
+      boxShadow: '0 4px 12px rgba(139, 92, 246, 0.2)',
+      fontSize: '15px',
+      marginBottom: 12,
       fontWeight: 400,
       position: 'relative',
       zIndex: 1,
       wordBreak: 'break-word',
+      backdropFilter: 'blur(10px)',
     },
     bubbleUser: {
       alignSelf: 'flex-end',
-      background: '#a084b6',
+      background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
       color: 'white',
-      borderRadius: '14px',
-      padding: '10px 18px',
-      maxWidth: '98vw',
+      borderRadius: '12px',
+      padding: '14px 18px',
+      maxWidth: '85%',
       boxSizing: 'border-box',
-      boxShadow: '0 4px 18px 0 rgba(99,37,105,0.10)',
-      fontSize: 'clamp(13px, 3vw, 16px)',
-      marginBottom: 10,
+      boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+      fontSize: '15px',
+      marginBottom: 12,
       fontWeight: 400,
       position: 'relative',
       zIndex: 1,
@@ -213,30 +354,30 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     chatContainer: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px',
-      padding: 'min(8vw, 32px) min(3vw, 18px) min(5vw, 22px) min(3vw, 18px)',
-      minHeight: '220px',
-  height: '60vh',
+      gap: 'clamp(8px, 2vw, 12px)',
+      padding: 'clamp(16px, 4vw, 20px)',
+      minHeight: 'clamp(250px, 50vh, 300px)',
+      height: 'clamp(300px, 60vh, 60vh)',
       overflowY: 'auto',
-      WebkitOverflowScrolling: 'touch', // scroll suave en iOS
-      touchAction: 'pan-y', // mejora scroll vertical en móviles
+      WebkitOverflowScrolling: 'touch',
+      touchAction: 'pan-y',
       alignItems: 'flex-start',
       justifyContent: 'flex-end',
-      background: '#fff',
-      border: '1.5px solid #ece6f3',
-      borderRadius: '16px',
-      boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
+      background: '#ffffff',
+      border: '1px solid #e2e8f0',
+      borderRadius: '12px',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
       boxSizing: 'border-box',
       width: '100%',
-      maxWidth: '100vw',
-      overscrollBehavior: 'contain', // previene scroll exterior en móviles
+      maxWidth: '100%',
+      overscrollBehavior: 'contain',
     },
     chatInputRow: {
       display: 'flex',
-      gap: 8,
-  marginTop: 0,
-      marginLeft: 4,
-      marginRight: 4,
+      gap: 'clamp(6px, 2vw, 8px)',
+      marginTop: 0,
+      marginLeft: 'clamp(4px, 1vw, 4px)',
+      marginRight: 'clamp(4px, 1vw, 4px)',
       flexDirection: 'row',
       flexWrap: 'wrap',
       width: '100%',
@@ -244,89 +385,95 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     },
     chatInput: {
       flex: 1,
-      padding: '12px 16px',
-      borderRadius: '20px',
-  border: '1.5px solid #b2ebf2',
-      fontSize: 'clamp(13px, 3vw, 16px)',
+      padding: 'clamp(12px, 3vw, 14px) clamp(14px, 3.5vw, 16px)',
+      borderRadius: '8px',
+      border: '1px solid #e2e8f0',
+      fontSize: 'clamp(14px, 3.5vw, 15px)',
       outline: 'none',
-      background: '#fff',
-      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
+      background: '#ffffff',
+      boxShadow: 'none',
       minWidth: 0,
       width: '100%',
-      maxWidth: '100vw',
+      maxWidth: '100%',
+      transition: 'all 0.2s ease',
+      touchAction: 'manipulation',
     },
     chatButton: {
-      background: '#632569',
+      background: 'linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%)',
       color: 'white',
       border: 'none',
-      borderRadius: '50%',
-      width: 40,
-      height: 40,
-      minWidth: 40,
-      minHeight: 40,
+      borderRadius: '8px',
+      width: 'clamp(44px, 12vw, 48px)',
+      height: 'clamp(44px, 12vw, 48px)',
+      minWidth: 'clamp(44px, 12vw, 48px)',
+      minHeight: 'clamp(44px, 12vw, 48px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: 20,
-      fontWeight: 'bold',
+      fontSize: 'clamp(16px, 4vw, 18px)',
+      fontWeight: '500',
       cursor: 'pointer',
-      boxShadow: '0 2px 8px 0 rgba(99,37,105,0.10)',
-      transition: 'all 0.18s',
+      boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+      transition: 'all 0.2s ease',
+      touchAction: 'manipulation',
     },
     input: {
       width: '100%',
-      padding: 'min(4vw, 14px) min(4vw, 16px)',
-      border: '1.5px solid #e0e0e0',
-      borderRadius: '10px',
-      marginBottom: '14px',
-      fontSize: 'clamp(13px, 3vw, 16px)',
+      padding: 'clamp(12px, 3vw, 14px) clamp(14px, 3.5vw, 16px)',
+      border: '1px solid #e2e8f0',
+      borderRadius: '8px',
+      marginBottom: 'clamp(12px, 3vw, 16px)',
+      fontSize: 'clamp(14px, 3.5vw, 15px)',
       outline: 'none',
       fontFamily: 'inherit',
-      background: '#faf9fb',
-      transition: 'border 0.18s',
-      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
+      background: '#ffffff',
+      transition: 'all 0.2s ease',
+      boxShadow: 'none',
       boxSizing: 'border-box',
+      touchAction: 'manipulation',
     },
     textarea: {
       width: '100%',
-      padding: 'min(4vw, 14px) min(4vw, 16px)',
-      border: '1.5px solid #e0e0e0',
-      borderRadius: '10px',
-      marginBottom: '14px',
-      fontSize: 'clamp(13px, 3vw, 16px)',
-      minHeight: '80px',
+      padding: 'clamp(12px, 3vw, 14px) clamp(14px, 3.5vw, 16px)',
+      border: '1px solid #e2e8f0',
+      borderRadius: '8px',
+      marginBottom: 'clamp(12px, 3vw, 16px)',
+      fontSize: 'clamp(14px, 3.5vw, 15px)',
+      minHeight: 'clamp(80px, 20vh, 100px)',
       resize: 'vertical',
       outline: 'none',
       fontFamily: 'inherit',
-      background: '#faf9fb',
-      transition: 'border 0.18s',
-      boxShadow: '0 1px 4px 0 rgba(99,37,105,0.03)',
+      background: '#ffffff',
+      transition: 'all 0.2s ease',
+      boxShadow: 'none',
       boxSizing: 'border-box',
+      touchAction: 'manipulation',
     },
     button: {
-      background: 'linear-gradient(90deg, #632569 60%, #a084b6 100%)',
+      background: 'linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%)',
       color: 'white',
       border: 'none',
-      padding: 'min(3vw, 12px) min(7vw, 28px)',
-      borderRadius: '10px',
+      padding: 'clamp(12px, 3vw, 14px) clamp(24px, 6vw, 28px)',
+      borderRadius: '8px',
       cursor: 'pointer',
-      fontSize: 'clamp(13px, 3vw, 16px)',
-      fontWeight: 'bold',
-      margin: '8px',
-      transition: 'all 0.18s',
-      boxShadow: '0 2px 8px 0 rgba(99,37,105,0.10)',
+      fontSize: 'clamp(14px, 3.5vw, 15px)',
+      fontWeight: '500',
+      margin: 'clamp(6px, 2vw, 8px)',
+      transition: 'all 0.2s ease',
+      boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
       boxSizing: 'border-box',
+      touchAction: 'manipulation',
     },
     resultCard: {
-      background: '#f8f9fa',
-      borderRadius: '16px',
-      padding: 'min(6vw, 22px) 4vw',
-      marginTop: '18px',
-      border: 'none',
-      boxShadow: '0 2px 12px 0 rgba(99,37,105,0.07)',
+      background: '#ffffff',
+      borderRadius: '12px',
+      padding: '24px',
+      marginTop: '24px',
+      border: '1px solid #e2e8f0',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
       boxSizing: 'border-box',
       width: '100%',
-      maxWidth: '100vw',
+      maxWidth: '100%',
     },
     card: {
       background: 'none',
@@ -334,14 +481,154 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
       border: 'none',
       padding: 0,
       margin: '0 auto',
-      maxWidth: '98vw',
-      marginTop: 8,
-      marginLeft: 8,
-      marginRight: 8,
+      maxWidth: 'min(98vw, 600px)',
+      marginTop: 'clamp(6px, 2vw, 8px)',
+      marginLeft: 'clamp(6px, 2vw, 8px)',
+      marginRight: 'clamp(6px, 2vw, 8px)',
       width: '100%',
       boxSizing: 'border-box',
-      marginBottom: 'clamp(18px, 8vw, 38px)', // margen inferior responsivo para móviles
+      marginBottom: 'clamp(18px, 8vw, 38px)',
     },
+    suggestionsContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 'clamp(6px, 2vw, 8px)',
+      marginTop: 'clamp(8px, 2vw, 12px)',
+      padding: '0 clamp(2px, 1vw, 4px)',
+    },
+    suggestionChip: {
+      background: '#ffffff',
+      border: '1px solid #8B5CF6',
+      borderRadius: '16px',
+      padding: 'clamp(6px, 2vw, 8px) clamp(12px, 3vw, 16px)',
+      fontSize: 'clamp(12px, 3vw, 13px)',
+      color: '#8B5CF6',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease',
+      boxShadow: '0 1px 4px rgba(139, 92, 246, 0.1)',
+      fontWeight: 500,
+      touchAction: 'manipulation',
+    },
+  };
+
+  // Función para manejar sugerencias
+  const handleSuggestion = async (suggestion) => {
+    setMessage(suggestion);
+    setIsLoading(true);
+    
+    try {
+      const res = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          messages: [
+            { role: 'user', content: suggestion }
+          ] 
+        }),
+      });
+      const data = await res.json();
+      
+      setChat(prev => [...prev, 
+        { sender: "user", text: suggestion },
+        { 
+          sender: "ai", 
+          text: data.response || 'No se pudo procesar tu solicitud.',
+          suggestions: getSuggestionsForResponse(data.response || '')
+        }
+      ]);
+    } catch (error) {
+      setChat(prev => [...prev, 
+        { sender: "user", text: suggestion },
+        { 
+          sender: "ai", 
+          text: '❌ Error al procesar tu solicitud. Por favor, intenta nuevamente.',
+          suggestions: [
+            "¿Puedes reformular tu pregunta?",
+            "Intenta con una consulta más específica",
+            "¿Necesitas ayuda con algo específico?"
+          ]
+        }
+      ]);
+    } finally {
+      setIsLoading(false);
+      setMessage("");
+    }
+  };
+
+  // Función para generar sugerencias contextuales
+  const getSuggestionsForResponse = (response) => {
+    const lowerResponse = response.toLowerCase();
+    
+    // Solo mostrar sugerencias si la respuesta es larga o contiene información específica
+    if (lowerResponse.length < 100) {
+      return null; // No mostrar sugerencias para respuestas cortas
+    }
+    
+    // Solo mostrar sugerencias si la respuesta contiene información útil
+    const hasUsefulInfo = lowerResponse.includes('kpi') || 
+                         lowerResponse.includes('indicador') ||
+                         lowerResponse.includes('proceso') ||
+                         lowerResponse.includes('optimizar') ||
+                         lowerResponse.includes('herramienta') ||
+                         lowerResponse.includes('software') ||
+                         lowerResponse.includes('riesgo') ||
+                         lowerResponse.includes('implementar') ||
+                         lowerResponse.includes('aplicar') ||
+                         lowerResponse.includes('equipo') ||
+                         lowerResponse.includes('colaboración');
+    
+    if (!hasUsefulInfo) {
+      return null; // No mostrar sugerencias si no hay información útil
+    }
+    
+    // Sugerencias específicas solo cuando sea apropiado
+    if (lowerResponse.includes('kpi') || lowerResponse.includes('indicador')) {
+      return [
+        "¿Cómo implementar estos KPIs?",
+        "¿Qué herramientas usar para medir?"
+      ];
+    }
+    
+    if (lowerResponse.includes('proceso') || lowerResponse.includes('optimizar')) {
+      return [
+        "¿Cuáles son los pasos siguientes?",
+        "¿Qué herramientas usar?"
+      ];
+    }
+    
+    if (lowerResponse.includes('herramienta') || lowerResponse.includes('software')) {
+      return [
+        "¿Cómo implementar esta herramienta?",
+        "¿Qué capacitación necesito?"
+      ];
+    }
+    
+    if (lowerResponse.includes('riesgo') || lowerResponse.includes('problema')) {
+      return [
+        "¿Cómo mitigar estos riesgos?",
+        "¿Qué plan de contingencia crear?"
+      ];
+    }
+    
+    if (lowerResponse.includes('implementar') || lowerResponse.includes('aplicar')) {
+      return [
+        "¿Cuál es el cronograma sugerido?",
+        "¿Qué recursos necesito?"
+      ];
+    }
+    
+    if (lowerResponse.includes('equipo') || lowerResponse.includes('colaboración')) {
+      return [
+        "¿Cómo motivar al equipo?",
+        "¿Qué roles asignar?"
+      ];
+    }
+    
+    // Solo 2 sugerencias por defecto si hay información útil
+    return [
+      "¿Puedes darme más detalles?",
+      "¿Qué pasos debería seguir?"
+    ];
   };
 
   // Helpers
@@ -425,60 +712,167 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     });
   }
 
-  // Formateo visual para el resultado del Potenciador de Ideas (títulos en negritas reales)
+  // Formateo visual inspirador para el resultado del Potenciador de Ideas
   function renderDocuResult(text) {
     if (!text) return null;
-    // Divide por líneas
+    
     const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     const blocks = [];
-    let currentTitle = null;
     let currentList = [];
+    
+    // Mapeo de títulos con iconos inspiradores
+    const titleIcons = {
+      'RESUMEN DEL VALOR DE LA IDEA': '💎',
+      'SUGERENCIAS DE MEJORA': '🚀',
+      'RIESGOS O DESAFÍOS A CONSIDERAR': '⚠️',
+      'PASOS INICIALES RECOMENDADOS': '🎯',
+      'KPI CLARO Y MEDIBLE PARA EVALUAR RESULTADOS': '📊'
+    };
+    
     // Títulos reconocidos
-    const titleRegex = /^(RESUMEN DEL VALOR DE LA IDEA|SUGERENCIAS DE MEJORA|RIESGOS O DESAFÍOS A CONSIDERAR|PASOS INICIALES RECOMENDADOS|✅ KPI CLARO Y MEDIBLE PARA EVALUAR RESULTADOS)$/i;
-    let afterTitle = false;
-    let lastTitle = '';
-    // Función para limpiar #, *, - al inicio de línea
+    const titleRegex = /^(RESUMEN DEL VALOR DE LA IDEA|SUGERENCIAS DE MEJORA|RIESGOS O DESAFÍOS A CONSIDERAR|PASOS INICIALES RECOMENDADOS|✅ KPI CLARO Y MEDIBLE PARA EVALUAR RESULTADOS|HERRAMIENTAS ÚTILES)$/i;
+    
     const cleanSymbols = (str) => str.replace(/^[#*\-\s]+/, '').trim();
-    lines.forEach(line => {
+    
+    lines.forEach((line, index) => {
       const cleanLine = cleanSymbols(line);
+      
       if (titleRegex.test(cleanLine)) {
-        if (currentList.length) {
-          blocks.push(<div style={{ margin: '8px 0 12px 0', paddingLeft: 12 }}>{currentList}</div>);
+        // Renderizar lista pendiente si existe
+        if (currentList.length > 0) {
+          blocks.push(
+            <div key={`list-${index}`} style={{
+              margin: '16px 0 20px 0',
+              padding: '16px 20px',
+              background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+              borderRadius: '12px',
+              border: '1px solid rgba(102, 126, 234, 0.1)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              {currentList}
+            </div>
+          );
           currentList = [];
         }
-        currentTitle = cleanLine.toUpperCase();
-        lastTitle = currentTitle;
-        blocks.push(<div style={{ fontWeight: 900, color: '#632569', fontSize: 17, margin: '16px 0 4px 0', letterSpacing: 0.5 }}>{currentTitle}</div>);
-        afterTitle = true;
+        
+        // Renderizar título inspirador
+        const icon = titleIcons[cleanLine.toUpperCase()] || '✨';
+        blocks.push(
+          <div key={`title-${index}`} style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            margin: '24px 0 12px 0',
+            padding: '16px 20px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px rgba(102, 126, 234, 0.2)',
+            color: 'white',
+            fontWeight: 700,
+            fontSize: '18px',
+            letterSpacing: '0.5px',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+          }}>
+            <span style={{ fontSize: '24px' }}>{icon}</span>
+            <span style={{ fontWeight: 'bold' }}>{cleanLine.toUpperCase()}</span>
+          </div>
+        );
       } else if (/^[-•]/.test(line)) {
-        // Eliminar guión y punto de viñeta, solo mostrar el texto limpio
-        currentList.push(<div style={{ marginBottom: 4 }}>{cleanSymbols(line)}</div>);
-        afterTitle = false;
+        // Elementos de lista con diseño inspirador
+        const cleanItem = cleanSymbols(line);
+        currentList.push(
+          <div key={`item-${currentList.length}`} style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '12px',
+            marginBottom: '12px',
+            padding: '12px 16px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '10px',
+            border: '1px solid rgba(102, 126, 234, 0.1)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.2s ease',
+            cursor: 'pointer'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 16px rgba(102, 126, 234, 0.15)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)';
+          }}>
+            <span style={{
+              fontSize: '16px',
+              color: '#667eea',
+              fontWeight: 'bold',
+              marginTop: '2px'
+            }}>•</span>
+            <span style={{
+              fontSize: '15px',
+              lineHeight: '1.6',
+              color: '#2d3748',
+              fontWeight: 500
+            }}>{cleanItem}</span>
+          </div>
+        );
       } else if (cleanLine) {
-        if (afterTitle) {
-          // Si es la primera línea después de un título, solo poner viñeta si NO es el resumen
-          if (lastTitle === 'RESUMEN DEL VALOR DE LA IDEA') {
-            currentList.push(<div style={{ marginBottom: 4 }}>{cleanLine}</div>);
-          } else {
-            currentList.push(<div style={{ marginBottom: 4 }}>{cleanLine}</div>);
-          }
-          afterTitle = false;
-        } else {
-          if (currentList.length) {
-            blocks.push(<div style={{ margin: '8px 0 12px 0', paddingLeft: 12 }}>{currentList}</div>);
-            currentList = [];
-          }
-          blocks.push(<div style={{ marginBottom: 6 }}>{cleanLine}</div>);
+        // Renderizar lista pendiente si existe
+        if (currentList.length > 0) {
+          blocks.push(
+            <div key={`list-${index}`} style={{
+              margin: '16px 0 20px 0',
+              padding: '16px 20px',
+              background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+              borderRadius: '12px',
+              border: '1px solid rgba(102, 126, 234, 0.1)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              {currentList}
+            </div>
+          );
+          currentList = [];
         }
+        
+        // Texto normal con diseño mejorado
+        blocks.push(
+          <div key={`text-${index}`} style={{
+            marginBottom: '12px',
+            padding: '12px 16px',
+            background: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: '10px',
+            border: '1px solid rgba(0, 0, 0, 0.05)',
+            fontSize: '15px',
+            lineHeight: '1.6',
+            color: '#4a5568',
+            fontWeight: 400
+          }}>
+            {cleanLine}
+          </div>
+        );
       }
     });
-    if (currentList.length) {
-      blocks.push(<div style={{ margin: '8px 0 12px 0', paddingLeft: 12 }}>{currentList}</div>);
+    
+    // Renderizar cualquier lista pendiente al final
+    if (currentList.length > 0) {
+      blocks.push(
+        <div key="list-final" style={{
+          margin: '16px 0 20px 0',
+          padding: '16px 20px',
+          background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%)',
+          borderRadius: '12px',
+          border: '1px solid rgba(102, 126, 234, 0.1)',
+          backdropFilter: 'blur(10px)'
+        }}>
+          {currentList}
+        </div>
+      );
     }
+    
     return blocks;
   }
 
-  // Función específica para renderizar resultados de DocuIA (DMAMA) - Versión limpia
+  // Función específica para renderizar resultados de DocuIA (DMAMA) - Versión inspiradora
   function renderDmamaResult(text) {
     if (!text) return null;
   
@@ -511,69 +905,182 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
     const blocks = [];
     let currentList = [];
 
-    // Patrones para identificar títulos (ahora más flexibles)
+    // Mapeo de títulos con iconos inspiradores para DocuIA
+    const titleIcons = {
+      'planteamiento': '🔎',
+      'objetivo': '🎯',
+      'indicadores': '📊',
+      'herramientas': '🛠️',
+      'tips': '💡',
+      'definir': '📝',
+      'medir': '📏',
+      'analizar': '🔍',
+      'mejorar': '⚡',
+      'asegurar': '🛡️'
+    };
+
+    // Patrones específicos para los títulos de DocuIA
     const titlePatterns = [
-      /^[🔎🎯📊🛠️💡]?\s*[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+:/i, // Títulos con dos puntos
-      /^[🔎🎯📊🛠️💡]?\s*[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+\s*$/i, // Títulos solos
+      /^#+\s*planteamiento del problema/i,
+      /^#+\s*objetivo del proyecto/i,
+      /^#+\s*indicadores de éxito/i,
+      /^#+\s*herramientas útiles/i,
+      /^#+\s*tips por fase/i,
+      /^planteamiento del problema/i,
+      /^objetivo del proyecto/i,
+      /^indicadores de éxito/i,
+      /^herramientas útiles/i,
+      /^tips por fase/i,
+      /^#+\s*[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+:/i, // Títulos con ## y dos puntos
+      /^#+\s*[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+\s*$/i, // Títulos con ## solos
+      /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+:/i, // Títulos con dos puntos
+      /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+\s*$/i, // Títulos solos
       /^(planteamiento|objetivo|indicadores|herramientas|tips|definir|medir|analizar|mejorar|asegurar)/i
     ];
 
     lines.forEach((line, idx) => {
       if (!line.trim()) return;
 
-      const cleanLine = line.replace(/^[🔎🎯📊🛠️💡]\s*/, ''); // Quitar emojis pero mantener texto
-      const isTitle = titlePatterns.some(pattern => pattern.test(cleanLine));
+      // Limpiar la línea: quitar ## y espacios extra
+      let cleanLine = line
+        .replace(/^#+\s*/, '') // Quitar ## y cualquier número de #
+        .trim();
+      
+      // Función específica para detectar títulos de DocuIA
+      const isDocuIATitle = (text) => {
+        const lowerText = text.toLowerCase().trim();
+        // Detectar títulos específicos de DocuIA
+        return lowerText.includes('planteamiento del problema') ||
+               lowerText.includes('objetivo del proyecto') ||
+               lowerText.includes('indicadores de éxito') ||
+               lowerText.includes('herramientas útiles') ||
+               lowerText.includes('tips por fase') ||
+               (lowerText.includes('planteamiento') && lowerText.length < 50) ||
+               (lowerText.includes('objetivo') && lowerText.length < 50) ||
+               (lowerText.includes('indicadores') && lowerText.length < 50) ||
+               (lowerText.includes('herramientas') && lowerText.length < 50) ||
+               (lowerText.includes('tips') && lowerText.length < 50);
+      };
+      
+      // Verificar si es título - lógica simplificada
+      const isTitle = isDocuIATitle(line) || isDocuIATitle(cleanLine);
+      
+      // Debug temporal para ver qué está pasando
+      if (line.includes('#') && (line.includes('planteamiento') || line.includes('objetivo') || line.includes('indicadores') || line.includes('herramientas') || line.includes('tips'))) {
+        console.log('DEBUG - Línea con #:', line);
+        console.log('DEBUG - CleanLine:', cleanLine);
+        console.log('DEBUG - IsTitle:', isTitle);
+        console.log('DEBUG - IsDocuIATitle(line):', isDocuIATitle(line));
+        console.log('DEBUG - IsDocuIATitle(cleanLine):', isDocuIATitle(cleanLine));
+      }
       const isBullet = /^[-•]/.test(line);
     
       if (isTitle) {
         // Renderizar lista pendiente si existe
         if (currentList.length > 0) {
-          blocks.push(<ul key={`list-${idx}`} style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+          blocks.push(
+            <div key={`list-${idx}`} style={{
+              margin: '16px 0 20px 0',
+              padding: '16px 20px',
+              background: 'linear-gradient(135deg, rgba(0, 131, 143, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%)',
+              borderRadius: '12px',
+              border: '1px solid rgba(0, 131, 143, 0.1)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              {currentList}
+            </div>
+          );
           currentList = [];
         }
       
-        // Renderizar título en NEGRITA (parseando markdown)
+        // Renderizar título inspirador
         blocks.push(
           <div key={`title-${idx}`} style={{
-            fontWeight: 900,
-            color: '#00838f',
+            margin: '24px 0 12px 0',
+            padding: '16px 20px',
+            background: 'linear-gradient(135deg, #00838f 0%, #00bcd4 100%)',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px rgba(0, 131, 143, 0.2)',
+            color: 'white',
+            fontWeight: 700,
             fontSize: '18px',
-            margin: '20px 0 10px 0',
-            padding: '10px 0',
-            borderBottom: '2px solid #00838f'
+            letterSpacing: '0.5px',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
           }}>
-            {parseMarkdown(cleanLine)}
+            <span style={{ fontWeight: 'bold' }}>{cleanLine.toUpperCase()}</span>
           </div>
         );
       } 
       else if (isBullet) {
-        // Líneas con viñetas
+        // Elementos de lista con diseño inspirador
         const bulletContent = line.replace(/^[-•]\s*/, '');
         currentList.push(
-          <li key={`item-${currentList.length}`} style={{
-            marginBottom: '6px',
-            lineHeight: '1.5',
-            fontSize: '16px',
-            padding: '2px 0'
+          <div key={`item-${currentList.length}`} style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '12px',
+            marginBottom: '12px',
+            padding: '12px 16px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '10px',
+            border: '1px solid rgba(0, 131, 143, 0.1)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+            transition: 'all 0.2s ease',
+            cursor: 'pointer'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.transform = 'translateY(-2px)';
+            e.target.style.boxShadow = '0 4px 16px rgba(0, 131, 143, 0.15)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)';
           }}>
-            {parseMarkdown(bulletContent)}
-          </li>
+            <span style={{
+              fontSize: '16px',
+              color: '#00838f',
+              fontWeight: 'bold',
+              marginTop: '2px'
+            }}>•</span>
+            <span style={{
+              fontSize: '15px',
+              lineHeight: '1.6',
+              color: '#2d3748',
+              fontWeight: 500
+            }}>{parseMarkdown(bulletContent)}</span>
+          </div>
         );
       }
       else if (line) {
         // Renderizar lista pendiente si existe
         if (currentList.length > 0) {
-          blocks.push(<ul key={`list-${idx}`} style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+          blocks.push(
+            <div key={`list-${idx}`} style={{
+              margin: '16px 0 20px 0',
+              padding: '16px 20px',
+              background: 'linear-gradient(135deg, rgba(0, 131, 143, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%)',
+              borderRadius: '12px',
+              border: '1px solid rgba(0, 131, 143, 0.1)',
+              backdropFilter: 'blur(10px)'
+            }}>
+              {currentList}
+            </div>
+          );
           currentList = [];
         }
       
-        // Texto normal (parseando markdown)
+        // Texto normal con diseño mejorado
         blocks.push(
           <div key={`text-${idx}`} style={{
-            marginBottom: '8px',
+            marginBottom: '12px',
+            padding: '12px 16px',
+            background: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: '10px',
+            border: '1px solid rgba(0, 0, 0, 0.05)',
+            fontSize: '15px',
             lineHeight: '1.6',
-            fontSize: '16px',
-            padding: '4px 0'
+            color: '#4a5568',
+            fontWeight: 400
           }}>
             {parseMarkdown(line)}
           </div>
@@ -583,7 +1090,18 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
 
     // Renderizar cualquier lista pendiente al final
     if (currentList.length > 0) {
-      blocks.push(<ul key="list-final" style={{ margin: '8px 0 12px 20px', padding: 0 }}>{currentList}</ul>);
+      blocks.push(
+        <div key="list-final" style={{
+          margin: '16px 0 20px 0',
+          padding: '16px 20px',
+          background: 'linear-gradient(135deg, rgba(0, 131, 143, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%)',
+          borderRadius: '12px',
+          border: '1px solid rgba(0, 131, 143, 0.1)',
+          backdropFilter: 'blur(10px)'
+        }}>
+          {currentList}
+        </div>
+      );
     }
 
     return blocks;
@@ -669,7 +1187,11 @@ Usa viñetas simples para listas.`;
       });
       if (!response.ok) throw new Error('Error de conexión');
       const data = await response.json();
-      setChat(prev => [...prev, { sender: "ai", text: data.response }]);
+      setChat(prev => [...prev, { 
+        sender: "ai", 
+        text: data.response,
+        suggestions: getSuggestionsForResponse(data.response) // Solo mostrará sugerencias cuando sea apropiado
+      }]);
     } catch (error) {
       setChat(prev => [...prev, { 
         sender: "ai", 
@@ -756,151 +1278,302 @@ Responde estrictamente con el formato solicitado.
   // Render principal
   return (
     <div style={styles.container}>
+      <style>{`
+        /* Estilos móviles adicionales */
+        @media (max-width: 768px) {
+          * {
+            -webkit-tap-highlight-color: transparent;
+          }
+          
+          input, textarea, button {
+            font-size: 16px !important; /* Previene zoom en iOS */
+          }
+          
+          .mobile-optimized {
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+          }
+          
+          .mobile-optimized:active {
+            -webkit-user-select: auto;
+            user-select: auto;
+          }
+        }
+        
+        /* Prevenir scroll horizontal */
+        body {
+          overflow-x: hidden;
+          width: 100%;
+        }
+        
+        /* Mejorar scroll en móviles */
+        .chat-scroll-fix {
+          -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
+        }
+      `}</style>
       <header style={styles.header}>
+        <StarField />
         <h1
           style={{
-            ...styles.mainTitle,
-            position: 'relative',
-            fontSize: '2.2rem',
-            letterSpacing: '1.2px',
-            fontWeight: 900,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 10,
-            zIndex: 1,
+            margin: '0 auto 20px auto',
+            gap: 12,
+            fontSize: 'clamp(28px, 5vw, 40px)',
+            fontWeight: '600',
+            letterSpacing: '-0.02em',
+            color: '#ffffff',
+            position: 'relative',
+            zIndex: 2,
+            textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
           }}
         >
-          <span style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '100%',
-            height: '110%',
-            zIndex: 0,
-            borderRadius: 18,
-            background: 'linear-gradient(90deg, #ff9800 0%, #e53935 30%, #a084b6 60%, #00bcd4 100%)',
-            filter: 'blur(12px) brightness(1.2)',
-            opacity: 0.55,
-            animation: 'shinebg 3.5s linear infinite',
-          }} />
-          <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: 2, position: 'relative', top: '2px', zIndex: 2 }}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ verticalAlign: 'middle' }}>
-              <defs>
-                <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#ff9800"/>
-                  <stop offset="0.3" stopColor="#e53935"/>
-                  <stop offset="0.6" stopColor="#a084b6"/>
-                  <stop offset="1" stopColor="#00bcd4"/>
-                </linearGradient>
-              </defs>
-              <circle cx="16" cy="16" r="15" stroke="url(#logoGrad)" strokeWidth="2.5" fill="#fff"/>
-              <ellipse cx="16" cy="16" rx="10" ry="15" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
-              <ellipse cx="16" cy="16" rx="15" ry="5" stroke="url(#logoGrad)" strokeWidth="1.5" fill="none"/>
-              <path d="M6 16h20" stroke="url(#logoGrad)" strokeWidth="1.5"/>
-              <path d="M16 2v28" stroke="url(#logoGrad)" strokeWidth="1.5"/>
+          <span style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            width: 48,
+            height: 48,
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%)',
+            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+            marginRight: 12,
+            position: 'relative',
+            overflow: 'hidden',
+            border: '2px solid rgba(255, 255, 255, 0.2)',
+          }}>
+            {/* Icono de autobús inspirado en Mobility ADO */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Cuerpo del autobús */}
+              <rect x="3" y="6" width="18" height="12" rx="2" stroke="white" strokeWidth="2" fill="none"/>
+              {/* Ventanas */}
+              <rect x="5" y="8" width="3" height="3" fill="white" opacity="0.8"/>
+              <rect x="10" y="8" width="3" height="3" fill="white" opacity="0.8"/>
+              <rect x="15" y="8" width="3" height="3" fill="white" opacity="0.8"/>
+              {/* Ruedas */}
+              <circle cx="7" cy="18" r="2" stroke="white" strokeWidth="2" fill="none"/>
+              <circle cx="17" cy="18" r="2" stroke="white" strokeWidth="2" fill="none"/>
+              {/* Línea de dirección */}
+              <path d="M3 10h18" stroke="white" strokeWidth="1" opacity="0.6"/>
             </svg>
           </span>
           <span style={{
+            background: 'linear-gradient(135deg, #8B5CF6 0%, #EF4444 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontWeight: '700',
             position: 'relative',
-            zIndex: 2,
-            padding: '0 12px',
-            color: '#632569',
-            textShadow: '0 2px 12px #fff, 0 1px 0 #e0c6f7, 0 0px 18px #a084b6',
-            fontWeight: 900,
-            letterSpacing: '1.2px',
-            fontFamily: 'Montserrat, Inter, sans-serif',
-            filter: 'drop-shadow(0 2px 8px #fff6)',
           }}>
             MOBILITY AI
+            <span style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '-20px',
+              fontSize: '12px',
+              opacity: 0.7,
+            }}>
+              🚌
+            </span>
           </span>
-          <style>{`
-            @keyframes shinebg {
-              0% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
-              50% { filter: blur(18px) brightness(1.4); opacity: 0.75; }
-              100% { filter: blur(12px) brightness(1.2); opacity: 0.55; }
-            }
-          `}</style>
         </h1>
         <div style={{
           width: '100%',
-          margin: '0 auto 12px auto',
-          maxWidth: 650,
-          minHeight: 24,
+          margin: '0 auto 16px auto',
+          maxWidth: 500,
+          minHeight: 20,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          position: 'relative',
+          zIndex: 2,
         }}>
           <span
             key={phraseIndex}
             style={{
-              color: '#bdbdbd',
-              fontWeight: 500,
-              fontSize: 13,
-              letterSpacing: 0.1,
+              color: '#e2e8f0',
+              fontWeight: 400,
+              fontSize: '13px',
+              letterSpacing: '0.025em',
               padding: '0 8px',
               opacity: fade ? 1 : 0,
               transition: 'opacity 0.8s',
               textAlign: 'center',
               width: '100%',
               display: 'block',
+              textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
             }}
           >
             {motivationalPhrases[phraseIndex]}
           </span>
         </div>
-        {/* Barra roja divisor */}
-        <div style={{ width: '100%', maxWidth: 650, height: 5, margin: '0 auto 18px auto', background: '#e53935', borderRadius: 3, boxShadow: '0 1px 6px 0 #e5393533' }} />
-      {/* Texto informativo debajo de la franja roja */}
+        {/* Barra divisoria con colores Mobility ADO */}
+        <div style={{ 
+          width: '100%', 
+          maxWidth: 400, 
+          height: 2, 
+          margin: '0 auto 20px auto', 
+          background: 'linear-gradient(90deg, #8B5CF6 0%, #EF4444 100%)', 
+          borderRadius: 1,
+          position: 'relative',
+          zIndex: 2,
+          boxShadow: '0 0 8px rgba(139, 92, 246, 0.5)',
+        }} />
+      {/* Texto informativo con marco */}
       <div style={{
-        width: '96vw',
-        maxWidth: 650,
-        minWidth: 0,
-        margin: '0 auto 12px auto',
+        width: '100%',
+        maxWidth: 500,
+        margin: '0 auto 8px auto',
         textAlign: 'center',
-        fontSize: '3.2vw', // Escala en móviles, pero nunca mayor a 12px
-        color: '#888',
+        fontSize: '14px',
+        color: '#cbd5e0',
         fontWeight: 400,
-        letterSpacing: 0.1,
-        fontFamily: 'Inter, Arial, sans-serif',
-        background: 'rgba(255,255,255,0.85)',
-        borderRadius: 8,
-        padding: '4px 2vw 3px 2vw',
-        boxShadow: '0 1px 8px 0 #a084b610',
-        fontStyle: 'italic',
-        lineHeight: 1.5,
-        wordBreak: 'break-word',
-        overflowWrap: 'break-word',
-        maxHeight: 36,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        letterSpacing: '0.025em',
+        fontFamily: 'Inter, sans-serif',
+        position: 'relative',
+        zIndex: 2,
+        textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
+        padding: '8px 16px',
+        background: 'rgba(255, 255, 255, 0.02)',
+        borderRadius: '12px',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(5px)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
       }}>
-        <span style={{fontSize:'min(3.2vw,12px)',width:'100%',display:'block'}}>
-          Plataforma potenciada con Open AI para equipos de mejora continua en MOBILITY ADO
-        </span>
+        Transforma ideas en innovación con IA 🚌
       </div>
       </header>
+      
+      {/* Carretera 2D divisoria */}
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        height: 'clamp(16px, 4vw, 20px)',
+        margin: '0 auto clamp(16px, 4vw, 20px) auto',
+        background: 'linear-gradient(90deg, #2d3748 0%, #4a5568 20%, #718096 40%, #a0aec0 50%, #718096 60%, #4a5568 80%, #2d3748 100%)',
+        borderTop: '1px solid #e2e8f0',
+        borderBottom: '1px solid #e2e8f0',
+        boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)',
+        overflow: 'hidden',
+      }}>
+        {/* Líneas de la carretera */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '0',
+          right: '0',
+          height: '2px',
+          background: 'repeating-linear-gradient(90deg, #ffffff 0px, #ffffff 20px, transparent 20px, transparent 40px)',
+          transform: 'translateY(-50%)',
+          animation: 'moveRoad 2s linear infinite',
+        }} />
+        
+        {/* Líneas laterales */}
+        <div style={{
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          right: '0',
+          height: '100%',
+          background: 'linear-gradient(90deg, transparent 0%, transparent 15%, #e2e8f0 15%, #e2e8f0 16%, transparent 16%, transparent 84%, #e2e8f0 84%, #e2e8f0 85%, transparent 85%, transparent 100%)',
+        }} />
+        
+        {/* Efecto de profundidad */}
+        <div style={{
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          right: '0',
+          height: '100%',
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 50%, rgba(0,0,0,0.05) 100%)',
+        }} />
+        
+                 {/* Autobús pequeño decorativo */}
+         <div style={{
+           position: 'absolute',
+           top: '50%',
+           left: '20%',
+           transform: 'translateY(-50%)',
+           width: 'clamp(20px, 5vw, 25px)',
+           height: 'clamp(10px, 2.5vw, 12px)',
+           background: 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)',
+           borderRadius: '4px 4px 1px 1px',
+           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+           animation: 'moveBus 4s ease-in-out infinite',
+         }}>
+          {/* Ventanas del autobús */}
+          <div style={{
+            position: 'absolute',
+            top: '1px',
+            left: '2px',
+            width: '4px',
+            height: '3px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '1px',
+          }} />
+          <div style={{
+            position: 'absolute',
+            top: '1px',
+            left: '8px',
+            width: '4px',
+            height: '3px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '1px',
+          }} />
+          <div style={{
+            position: 'absolute',
+            top: '1px',
+            left: '14px',
+            width: '4px',
+            height: '3px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '1px',
+          }} />
+          {/* Ruedas */}
+          <div style={{
+            position: 'absolute',
+            bottom: '-1px',
+            left: '3px',
+            width: '3px',
+            height: '3px',
+            background: '#2d3748',
+            borderRadius: '50%',
+            border: '1px solid #4a5568',
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '-1px',
+            right: '3px',
+            width: '3px',
+            height: '3px',
+            background: '#2d3748',
+            borderRadius: '50%',
+            border: '1px solid #4a5568',
+          }} />
+        </div>
+        
+        <style>{`
+          @keyframes moveRoad {
+            0% { transform: translateY(-50%) translateX(0px); }
+            100% { transform: translateY(-50%) translateX(-40px); }
+          }
+          @keyframes moveBus {
+            0%, 100% { transform: translateY(-50%) translateX(0px); }
+            50% { transform: translateY(-50%) translateX(15px); }
+          }
+        `}</style>
+      </div>
+      
       <div style={styles.tabs}>
         <button
           style={{
             ...styles.tabButton(activeTab === "ai"),
-            background: activeTab === "ai"
-              ? 'linear-gradient(90deg, #00c6fb 0%, #005bea 100%)'
-              : '#1a237e',
-            color: 'white',
-            fontWeight: 900,
-            letterSpacing: 0.5,
-            textShadow: '0 1px 8px #fff3',
-            border: 'none',
-            fontFamily: 'Montserrat, Inter, sans-serif',
-            boxShadow: activeTab === "ai" ? '0 2px 12px 0 rgba(0,38,255,0.13)' : styles.tabButton(false).boxShadow,
-            transition: 'all 0.18s',
             display: 'flex',
             alignItems: 'center',
-            gap: 6,
+            gap: 8,
           }}
           onClick={() => setActiveTab("ai")}
         >
@@ -916,58 +1589,62 @@ Responde estrictamente con el formato solicitado.
         <button
           style={{
             ...styles.tabButton(activeTab === "docu"),
-            background: activeTab === "docu"
-              ? 'linear-gradient(90deg, #ff9800 0%, #e53935 40%, #a084b6 80%, #00bcd4 100%)'
-              : '#632569',
-            color: 'white',
-            fontWeight: 900,
-            letterSpacing: 0.5,
-            textShadow: '0 1px 8px #fff3',
-            border: 'none',
-            fontFamily: 'Montserrat, Inter, sans-serif',
-            boxShadow: activeTab === "docu" ? '0 2px 12px 0 rgba(99,37,105,0.13)' : styles.tabButton(false).boxShadow,
-            transition: 'all 0.18s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
           }}
           onClick={() => setActiveTab("docu")}
-        >🚀 Potenciador de Ideas</button>
+        >
+          🚀 Potenciador
+        </button>
         <button
           style={{
             ...styles.tabButton(activeTab === "dmama"),
-            background: activeTab === "dmama"
-              ? 'linear-gradient(90deg, #00c6fb 0%, #ff9800 100%)'
-              : '#00838f',
-            color: 'white',
-            fontWeight: 900,
-            letterSpacing: 0.5,
-            textShadow: '0 1px 8px #fff3',
-            border: 'none',
-            fontFamily: 'Montserrat, Inter, sans-serif',
-            boxShadow: activeTab === "dmama" ? '0 2px 12px 0 rgba(0,131,143,0.13)' : styles.tabButton(false).boxShadow,
-            transition: 'all 0.18s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
           }}
           onClick={() => setActiveTab("dmama")}
-        >📄 DocuIA</button>
+        >
+          📄 DocuIA
+        </button>
       </div>
       {/* TAB 3: DOCUIA */}
       {activeTab === "dmama" && (
         <div style={{
-          background: '#fff',
-          borderRadius: 18,
-          boxShadow: '0 2px 16px 0 rgba(0,131,143,0.08)',
+          background: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '20px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
           maxWidth: 600,
           margin: '0 auto',
-          padding: '32px 24px 28px 24px',
+          padding: '32px',
           marginBottom: 32,
+          border: '1px solid rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(10px)',
         }}>
           <h2 style={{
-            color: '#00838f',
-            fontWeight: 900,
-            fontSize: 20,
-            margin: '0 0 18px 0',
-            letterSpacing: 0.5,
+            color: '#632569',
+            fontWeight: 700,
+            fontSize: '24px',
+            margin: '0 0 16px 0',
+            letterSpacing: '-0.025em',
             textAlign: 'center',
-            fontFamily: 'Montserrat, Inter, sans-serif',
-          }}>Guía DMAMA para Documentar tu Idea</h2>
+            fontFamily: 'Inter, sans-serif',
+          }}>📄 Guía DMAMA para Documentar tu Idea</h2>
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '24px',
+            color: '#a084b6',
+            fontSize: '15px',
+            lineHeight: '1.6',
+            fontFamily: 'Inter, sans-serif',
+          }}>
+            Estructura tu innovación con metodología probada.
+            <br />
+            <span style={{ fontSize: '13px', opacity: 0.8, color: '#a084b6' }}>
+              Define, Mide, Analiza, Mejora y Asegura el éxito de tu proyecto 🎯
+            </span>
+          </div>
           <form onSubmit={async (e) => {
             e.preventDefault();
             setIsLoadingDmama(true);
@@ -1197,13 +1874,42 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                   }
                 `}</style>
                 {chat.map((msg, i) => (
-                  <div
-                    key={i}
-                    style={msg.sender === "ai" ? styles.bubbleAI : styles.bubbleUser}
-                  >
-                    {msg.sender === "ai"
-                      ? renderChatMessage(msg.text)
-                      : msg.text}
+                  <div key={i} style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: msg.sender === "ai" ? 'flex-start' : 'flex-end'
+                  }}>
+                    <div
+                      style={msg.sender === "ai" ? styles.bubbleAI : styles.bubbleUser}
+                    >
+                      {msg.sender === "ai"
+                        ? renderChatMessage(msg.text)
+                        : msg.text}
+                    </div>
+                    {msg.sender === "ai" && msg.suggestions && msg.suggestions.length > 0 && (
+                      <div style={styles.suggestionsContainer}>
+                        {msg.suggestions.map((suggestion, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleSuggestion(suggestion)}
+                            style={styles.suggestionChip}
+                            onMouseEnter={(e) => {
+                              e.target.style.background = 'rgba(102, 126, 234, 0.1)';
+                              e.target.style.transform = 'translateY(-1px)';
+                              e.target.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.2)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.background = 'rgba(255, 255, 255, 0.9)';
+                              e.target.style.transform = 'translateY(0)';
+                              e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                            }}
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
                 {isLoading && (
@@ -1269,7 +1975,13 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
                 onClick={() => setChat([
                   {
                     sender: "ai",
-                    text: `¡Hola! Soy Mobility AI, tu asistente digital en Mobility ADO.\n\nEstoy aquí para apoyarte en tu día a día. ¿Cómo puedo ayudarte hoy?\n\nPuedo ayudarte a:\n• Generar ideas para mejorar procesos, productos o servicios.\n• Buscar soluciones prácticas a los retos que enfrentas.\n• Guiarte para estructurar y potenciar propuestas de mejora.\n• Sugerir KPIs, pasos iniciales y detectar riesgos.\n\nCuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`
+                    text: `¡Hola! Soy Mobility AI, tu asistente digital en Mobility ADO.\n\nEstoy aquí para apoyarte en tu día a día. ¿Cómo puedo ayudarte hoy?\n\nPuedo ayudarte a:\n• Generar ideas para mejorar procesos, productos o servicios.\n• Buscar soluciones prácticas a los retos que enfrentas.\n• Guiarte para estructurar y potenciar propuestas de mejora.\n• Sugerir KPIs, pasos iniciales y detectar riesgos.\n\nCuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
+                    suggestions: [
+                      "¿Cómo puedo mejorar la experiencia del cliente?",
+                      "Necesito ideas para optimizar procesos",
+                      "Ayúdame a estructurar un proyecto de mejora",
+                      "¿Qué KPIs debería medir para mi área?"
+                    ]
                   },
                 ])}
                 style={{ ...styles.chatButton, background: '#e53935', marginLeft: 8 }}
@@ -1288,10 +2000,26 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
         {/* TAB 2: POTENCIADOR DE IDEAS */}
         {activeTab === "docu" && (
           <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-            <div style={{ ...styles.card, width: '100%', maxWidth: 600 }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: 'clamp(16px, 4vw, 20px)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              maxWidth: 'min(600px, 95vw)',
+              margin: '0 auto',
+              padding: 'clamp(20px, 6vw, 32px)',
+              marginBottom: 'clamp(20px, 6vw, 32px)',
+              border: '1px solid rgba(0, 0, 0, 0.1)',
+              backdropFilter: 'blur(10px)',
+            }}>
               <div style={{ textAlign: 'center', marginBottom: 10 }}>
-                <h2 style={{ color: '#632569', fontWeight: 800, fontSize: 22, margin: 0, letterSpacing: '0.5px' }}>Potenciador de Ideas</h2>
-                <div style={{ color: '#a084b6', fontSize: 15, marginTop: 2 }}>Completa el formulario y recibe sugerencias para mejorar tu propuesta.</div>
+                <h2 style={{ color: '#632569', fontWeight: 800, fontSize: 22, margin: 0, letterSpacing: '0.5px' }}>🚀 Potenciador de Ideas</h2>
+                <div style={{ color: '#a084b6', fontSize: 15, marginTop: 8, lineHeight: '1.6' }}>
+                  Transforma tu visión en realidad con IA avanzada. 
+                  <br />
+                  <span style={{ fontSize: '13px', opacity: 0.8 }}>
+                    Cada idea es una semilla de innovación. ¡Hagamos que florezca! ✨
+                  </span>
+                </div>
                 <div style={{ width: '100%', height: 1, background: '#ece6f3', margin: '18px 0 10px 0', borderRadius: 2 }} />
               </div>
               <input
