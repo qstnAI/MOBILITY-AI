@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import jsPDF from 'jspdf';
 
+
 // Componente de estrellas animadas para el fondo del espacio exterior
 function StarField() {
   const [stars, setStars] = useState([]);
@@ -217,6 +218,8 @@ function renderDmamaResult(text) {
 }
 
 export default function App() {
+
+  
   // Estados principales
   const [activeTab, setActiveTab] = useState("ai");
   // Estado para DocuIA
@@ -1808,7 +1811,7 @@ Genera una guía breve, clara y visual con:
 
 El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o dashboard, usando frases cortas, bullets y emojis para hacerlo claro y atractivo.`;
             try {
-              const res = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+                              const res = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: [
