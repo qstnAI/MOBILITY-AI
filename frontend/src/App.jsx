@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import jsPDF from 'jspdf';
 
 // Componente de estrellas animadas para el fondo del espacio exterior
 function StarField() {
@@ -871,6 +872,105 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
     
     return blocks;
   }
+
+  // Función para generar PDF del resultado de DocuIA
+  const generateDmamaPDF = () => {
+    if (!dmamaResult) return;
+
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 20;
+    const maxWidth = pageWidth - (margin * 2);
+    
+    // Configuración de fuentes
+    doc.setFont('helvetica');
+    
+    // Título principal
+    doc.setFontSize(20);
+    doc.setTextColor(99, 37, 105); // Color Mobility ADO
+    doc.text('Guía DMAMA - Mobility ADO', pageWidth / 2, 30, { align: 'center' });
+    
+    // Información del proyecto
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Colaborador: ${dmamaForm.colaborador}`, margin, 50);
+    doc.text(`Área: ${dmamaForm.area}`, margin, 60);
+    doc.text(`Descripción: ${dmamaForm.descripcion}`, margin, 70);
+    
+    // Línea divisoria
+    doc.setDrawColor(139, 92, 246);
+    doc.setLineWidth(0.5);
+    doc.line(margin, 85, pageWidth - margin, 85);
+    
+    // Contenido del resultado
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    let yPosition = 100;
+    
+    const lines = dmamaResult.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    
+    lines.forEach((line, index) => {
+      // Detectar títulos
+      const isTitle = /^(PLANTEAMIENTO|OBJETIVO|INDICADORES|HERRAMIENTAS|TIPS|DEFINIR|MEDIR|ANALIZAR|MEJORAR|ASEGURAR)/i.test(line);
+      
+      if (isTitle) {
+        // Verificar si necesitamos nueva página
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = 30;
+        }
+        
+        doc.setFontSize(16);
+        doc.setTextColor(0, 131, 143); // Color azul Mobility ADO
+        doc.setFont('helvetica', 'bold');
+        doc.text(line.toUpperCase(), margin, yPosition);
+        yPosition += 15;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+      } else if (line.startsWith('-') || line.startsWith('•')) {
+        // Elementos de lista
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 30;
+        }
+        
+        const bulletText = line.replace(/^[-•]\s*/, '');
+        const wrappedText = doc.splitTextToSize(`• ${bulletText}`, maxWidth - 10);
+        
+        doc.setFontSize(11);
+        doc.text(wrappedText, margin + 5, yPosition);
+        yPosition += (wrappedText.length * 5) + 3;
+      } else if (line.trim()) {
+        // Texto normal
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 30;
+        }
+        
+        const wrappedText = doc.splitTextToSize(line, maxWidth);
+        doc.setFontSize(11);
+        doc.text(wrappedText, margin, yPosition);
+        yPosition += (wrappedText.length * 5) + 5;
+      }
+    });
+    
+    // Pie de página
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Mobility ADO - Página ${i} de ${totalPages}`, pageWidth / 2, doc.internal.pageSize.height - 10, { align: 'center' });
+    }
+    
+    // Generar nombre del archivo
+    const timestamp = new Date().toISOString().slice(0, 10);
+    const fileName = `DocuIA_${dmamaForm.colaborador}_${timestamp}.pdf`;
+    
+    // Descargar PDF
+    doc.save(fileName);
+  };
 
   // Función específica para renderizar resultados de DocuIA (DMAMA) - Versión inspiradora
   function renderDmamaResult(text) {
@@ -1848,6 +1948,48 @@ El resultado debe ser breve, ejecutivo y fácil de usar en una presentación o d
               fontFamily: 'Inter, sans-serif',
               lineHeight: '1.6',
             }}>
+              {/* Botón de descarga PDF */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                marginBottom: '20px',
+                gap: '12px'
+              }}>
+                <button
+                  onClick={generateDmamaPDF}
+                  style={{
+                    background: 'linear-gradient(135deg, #00838f 0%, #00bcd4 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 131, 143, 0.3)',
+                    transition: 'all 0.2s ease',
+                    fontFamily: 'Inter, sans-serif',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 6px 16px rgba(0, 131, 143, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 12px rgba(0, 131, 143, 0.3)';
+                  }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C13.1 2 14 2.9 14 4V12L16.5 9.5C16.9 9.1 17.5 9.1 17.9 9.5C18.3 9.9 18.3 10.5 17.9 10.9L12.7 16.1C12.3 16.5 11.7 16.5 11.3 16.1L6.1 10.9C5.7 10.5 5.7 9.9 6.1 9.5C6.5 9.1 7.1 9.1 7.5 9.5L10 12V4C10 2.9 10.9 2 12 2Z" fill="white"/>
+                    <path d="M20 20H4C3.4 20 3 20.4 3 21C3 21.6 3.4 22 4 22H20C20.6 22 21 21.6 21 21C21 20.4 20.6 20 20 20Z" fill="white"/>
+                  </svg>
+                  Descargar PDF
+                </button>
+              </div>
+              
               <div style={{position:'relative',zIndex:1}}>
                 {renderDmamaResult(dmamaResult)}
               </div>

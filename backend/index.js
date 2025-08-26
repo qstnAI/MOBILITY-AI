@@ -21,19 +21,7 @@ const openai = new OpenAI({
 
 // Configuración de Google Sheets
 const auth = new google.auth.GoogleAuth({
-  credentials: {
-    type: "service_account",
-    project_id: "mobility-ia",
-    private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLIENT_ID,
-    auth_uri: "https://accounts.google.com/o/oauth2/auth",
-    token_uri: "https://oauth2.googleapis.com/token",
-    auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-    client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL,
-    universe_domain: "googleapis.com"
-  },
+  keyFile: path.join(__dirname, 'mobility-ia-2ecb9f2273a0.json'),
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
@@ -43,6 +31,11 @@ const sheets = google.sheets({ version: 'v4', auth });
 const saveToGoogleSheets = async (data, sheetId) => {
   try {
     console.log("🔄 Preparando datos para Google Sheets:", data);
+    console.log("📋 Sheet ID:", sheetId);
+    
+    // Verificar que tenemos autenticación
+    const authClient = await auth.getClient();
+    console.log("✅ Autenticación con Google exitosa");
     
     // Preparar los datos para Google Sheets
     const values = data.map(row => [
@@ -75,6 +68,18 @@ const saveToGoogleSheets = async (data, sheetId) => {
   } catch (error) {
     console.error("❌ Error guardando en Google Sheets:", error);
     console.error("❌ Detalles del error:", error.message);
+    console.error("❌ Stack trace:", error.stack);
+    
+    // Verificar si es un error de permisos
+    if (error.message.includes('403') || error.message.includes('Forbidden')) {
+      console.error("❌ Error de permisos: Verifica que la cuenta de servicio tenga acceso al Google Sheet");
+    }
+    
+    // Verificar si es un error de autenticación
+    if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+      console.error("❌ Error de autenticación: Verifica las credenciales de la cuenta de servicio");
+    }
+    
     return false;
   }
 };
@@ -369,5 +374,7 @@ app.listen(PORT, () => {
   console.log(`   POST /api/dmama    - Chat de innovación general (gpt-4o-mini)`);
   console.log(`   POST /api/chat     - Propuestas estructuradas con KPIs (gpt-4o-mini)`);
   console.log(`   POST /api/docuia   - Documentación DMAMA con métricas (gpt-4o-mini)`);
+  console.log(`   POST /api/save-data - Guardar datos en Google Sheets`);
+  console.log(`   GET  /api/test-sheets - Probar conexión con Google Sheets`);
   console.log(`   GET  /health       - Health check`);
 });
