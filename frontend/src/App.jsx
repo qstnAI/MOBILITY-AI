@@ -1339,7 +1339,7 @@ Analiza la siguiente propuesta de mejora:
 Responde estrictamente con el formato solicitado.
 `;
     try {
-      const response = await fetch('http://localhost:3001/api/chat', {
+      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
