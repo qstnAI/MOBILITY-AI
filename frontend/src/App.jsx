@@ -318,7 +318,6 @@ Cuéntame tu reto, idea o pregunta y juntos encontraremos la mejor solución.`,
       transition: 'all 0.2s ease',
       outline: 'none',
       boxShadow: active ? '0 4px 12px rgba(139, 92, 246, 0.3)' : 'none',
-      border: active ? 'none' : '1px solid #e2e8f0',
       minWidth: 'clamp(80px, 20vw, 100px)',
       touchAction: 'manipulation',
     }),
@@ -1340,7 +1339,7 @@ Analiza la siguiente propuesta de mejora:
 Responde estrictamente con el formato solicitado.
 `;
     try {
-      const response = await fetch('https://mejora-continua-ia.onrender.com/api/chat', {
+      const response = await fetch('http://localhost:3001/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
